@@ -1,0 +1,1 @@
+export const PASSWORD_CREATED = 'PASSWORD_CREATED';

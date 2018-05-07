@@ -1,8 +1,10 @@
 import { combineReducers } from 'redux';
-import { payment } from '../common/reducers';
+import createPasswordReducer from '../../components/screens/CreatePassword/reducer';
+import createAccountReducer from '../../components/screens/CreateAccount/reducer';
+
 
 const rootReducer = combineReducers({
-    paymentInfo: payment
+    user: combineReducers({ account: createAccountReducer, credentials: createPasswordReducer })
 });
 
 export default rootReducer;

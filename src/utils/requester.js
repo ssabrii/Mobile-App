@@ -1,13 +1,14 @@
 import { AsyncStorage } from 'react-native';
-import { apiHost, domainPrefix } from '../config';
+import { PUBLIC_URL, domainPrefix } from '../config';
 
-const host = apiHost;
+const host = PUBLIC_URL;
 const { fetch } = global;
 const RequestMethod = {
     GET: 0,
     POST: 1,
     DELETE: 2
 };
+
 
 async function getHeaders(headers = null) {
     headers = headers || {};
@@ -83,11 +84,17 @@ async function sendRequest(endpoint, method, postObj = null, captchaToken = null
         });
 }
 
+
+export async function checkIfEmailExists(email) {
+    const url = `${host}${domainPrefix}/users/email/${encodeURIComponent(email)}/`;
+    return sendRequest(url, RequestMethod.GET)
+        .then(res => res.response.json());
+}
+
 export async function register(userObj, captchaToken) {
     // TODO: update backend to have it understand and process userWantsPromo correctly
     delete userObj.userWantsPromo;
-
-    return sendRequest(`${host}users/signup`, RequestMethod.POST, userObj, captchaToken).then(res => res);
+    return sendRequest(`${host}${domainPrefix}/users/signup`, RequestMethod.POST, userObj, captchaToken).then(res => res);
 }
 
 export async function login(userObj, captchaToken) {
