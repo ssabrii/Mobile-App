@@ -5,7 +5,10 @@ export const REACT_APP_LOCABI = '[{\\"constant\\":true,\\"inputs\\":[],\\"name\\
 export const REACT_APP_LOCExchange = '0xa43dca51ebb1e3bdb7a9020b11b90a793d38f55a'; // eslint-disable-line
 
 // Staging server
+export const apiHost = 'https://staging.locktrip.com/api/';
+export const imgHost = 'https://static.locktrip.com/';
+export const basePath = 'https://staging.locktrip.com/';
 export const routerPrefix = '.';
-export const domainPrefix = 'api';
+export const domainPrefix = 'rc';
 export const PUBLIC_URL = 'https://staging.locktrip.com/';
 
