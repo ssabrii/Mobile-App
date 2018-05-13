@@ -1,7 +1,7 @@
 import { AsyncStorage } from 'react-native';
-import { PUBLIC_URL, domainPrefix } from '../config';
+import { domainPrefix, apiHost } from '../config';
 
-const host = PUBLIC_URL;
+const host = apiHost;
 const { fetch } = global;
 const RequestMethod = {
     GET: 0,
@@ -25,10 +25,10 @@ async function getHeaders(headers = null) {
     return headers;
 }
 
-async function sendRequest(endpoint, method, postObj = null, captchaToken = null, headers = {
-    'Accept': 'application/json',
+async function sendRequest(endpoint, method, postObj = null, captchaToken = null, headers = { // eslint-disable-line
+    Accept: 'application/json',
     'Content-Type': 'application/json',
-    'X-Device-Version': '49365f68-42e1-11e8-842f-0ed5f89f718b',
+    'X-Device-Version': '49365f68-42e1-11e8-842f-0ed5f89f718b'
 }, onLogOut) {
     const allHeaders = getHeaders(headers);
 
@@ -94,7 +94,7 @@ export async function checkIfEmailExists(email) {
 export async function register(userObj, captchaToken) {
     // TODO: update backend to have it understand and process userWantsPromo correctly
     delete userObj.userWantsPromo;
-    return sendRequest(`${host}${domainPrefix}/users/signup`, RequestMethod.POST, userObj, captchaToken).then(res => res);
+    return sendRequest(`${host}/users/signup`, RequestMethod.POST, userObj, captchaToken).then(res => res);
 }
 
 export async function login(userObj) {
