@@ -16,7 +16,8 @@ import { getUserInfo, getRegionsBySearchParameter, getCountriesWithListings, get
 import Icon from 'react-native-fontawesome';
 import Toast from 'react-native-simple-toast';
 
-const shouldBeNative = false; //This line controls which screen should be show when clicked on search, it its true it will take to hardcoded hotel else will take to webview
+const shouldBeNative = true; //This line controls which screen should be shown when clicked on search, it its true it will take to hardcoded hotel else will take to webview
+
 class Explore extends Component {
     static propTypes = {
         navigation: PropTypes.shape({
@@ -52,7 +53,8 @@ class Explore extends Component {
             searchHotel : true,
             isHotelSelected: true,
             countryId: 0,
-            countryName : '',
+            countryName: '',
+            value: '',
             countries: [],
             cities: [],
             search: '',
@@ -80,7 +82,21 @@ class Explore extends Component {
             currencyIcon: Icons.euro,
             email: '',
             token: '',
-            countriesLoaded : false
+            countriesLoaded : false,
+            items: [
+                {
+                    label: 'EUR',
+                    value: 'EUR',
+                },
+                {
+                    label: 'USD',
+                    value: 'USD',
+                },
+                {
+                    label: 'GBP',
+                    value: 'GBP',
+                },
+            ],
         };
         this.getCountryValues();
     }
@@ -114,7 +130,7 @@ class Explore extends Component {
             AsyncStorage.setItem('currentCurrency', "EUR");
             AsyncStorage.setItem('currencyLocPrice', json[0].price_eur);
 
-            console.log("currencyLocPrice" + json[0].price_eur);
+            
         }).catch(err => {
             console.log(err);
         });
@@ -225,6 +241,21 @@ class Explore extends Component {
             }
             else {
                 this.props.navigation.navigate('Debug', {regionId: this.state.regionId, language: this.state.language,currencyIcon: this.state.currencyIcon,locRate : this.state.locPrice, startDate: this.state.checkInDateFormated, endDate: this.state.checkOutDateFormated, startDate: this.state.checkInDateFormated, endDate: this.state.checkOutDateFormated});
+                // this.props.navigation.navigate('Debug', {
+                //     searchedCity: this.state.search,
+                //     searchedCityId: 72,
+                //     checkInDate: this.state.checkInDate,
+                //     checkOutDate: this.state.checkOutDate,
+                //     guests: this.state.guests,
+                //     children: this.state.children,
+                //     regionId: this.state.regionId,
+                //     currency: this.state.language,
+                //     checkOutDateFormated: this.state.checkOutDateFormated,
+                //     checkInDateFormated: this.state.checkInDateFormated,
+                //     roomsDummyData: encodeURI(JSON.stringify(this.state.roomsDummyData)),
+                //     locRate : this.state.locPrice,
+                //     currencyIcon: this.state.currencyIcon
+                // });
             }
         }
         else{
@@ -348,13 +379,16 @@ class Explore extends Component {
 
                         </View>
                         <View style={styles.pickerWrap}>
-                            <Picker style={styles.picker}
-                              selectedValue={this.state.language}
-                              onValueChange={(itemValue, itemIndex) => this.spinnerValueChange(itemValue)}>
-                              <Picker.Item label="EUR" value="EUR" />
-                              <Picker.Item label="USD" value="USD" />
-                              <Picker.Item label="GBP" value="GBP" />
-                            </Picker>
+                            <RNPickerSelect
+                            items={this.state.items}
+                            onValueChange={(value) => {
+                                console.log(value);
+                                this.spinnerValueChange(value)
+                            }}
+                            value={this.state.language}
+                            style={{ ...pickerSelectStyles }}
+                            >
+                            </RNPickerSelect>
                         </View>
                 </View>
         );
@@ -373,25 +407,37 @@ class Explore extends Component {
                                 value: 0,
                             }}
                             onValueChange={(value) => {
+                                console.log(value);
                                 this.setState({
                                     countryId: value.id,
-                                    countryName: value.name
+                                    countryName: value.name,
+                                    value: value
                                 });
                             }}
-                            value={this.state.countryId}
+                            value={this.state.value}
                             style={{ ...pickerSelectStyles }}
                         >
-                    </RNPickerSelect>
-                </View>
+                        </RNPickerSelect>
+                    </View>
                 </View>
                 <View style={styles.pickerWrap}>
-                    <Picker style={styles.picker}
+                    <RNPickerSelect
+                        items={this.state.items}
+                        onValueChange={(value) => {
+                            console.log(value);
+                            this.spinnerValueChange(value)
+                        }}
+                        value={this.state.language}
+                        style={{ ...pickerSelectStyles }}
+                        >
+                    </RNPickerSelect>
+                    {/* <Picker style={{width: '100%', height: 50}} itemStyle={{height: 50}}
                         selectedValue={this.state.language}
                         onValueChange={(itemValue, itemIndex) => this.spinnerValueChange(itemValue)}>
                         <Picker.Item label="EUR" value="EUR" />
                         <Picker.Item label="USD" value="USD" />
                         <Picker.Item label="GBP" value="GBP" />
-                    </Picker>
+                    </Picker> */}
                  </View>
             </View>
         );
@@ -405,7 +451,6 @@ class Explore extends Component {
 
             <View style={styles.container}>
                 {this.state.searchHotel ? this.renderHotelTopView() : this.renderHomeTopView()}
-                
                 <ScrollView>
                     <View style={styles.scrollViewContentMain}>
                         {this.renderAutocomplete()}  
@@ -502,13 +547,11 @@ class Explore extends Component {
 
 const pickerSelectStyles = StyleSheet.create({
     inputIOS: {
+        height: 50,
         fontSize: 16,
         paddingTop: 13,
         paddingHorizontal: 10,
         paddingBottom: 12,
-        borderWidth: 1,
-        borderColor: 'gray',
-        borderRadius: 4,
         backgroundColor: 'white',
         color: 'black',
     },
