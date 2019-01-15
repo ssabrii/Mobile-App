@@ -5,6 +5,7 @@
   * [Common](#common)
   * [iOS](#ios)
   * [Android](#android)
+* [Staging](#staging)
 * [Available Scripts](#available-scripts)
   * [npm run ios](#npm-run-ios)
   * [npm run android](#npm-run-android)
@@ -23,6 +24,10 @@
 ### Android
   * `Java 1.8` (jdk 8)
   * `Android Studio` *(optional)*
+
+
+### Staging
+Using Travis CI with `.travis.yml` setup.
 
 ---
  
