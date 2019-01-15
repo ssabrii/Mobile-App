@@ -13,9 +13,8 @@ jobs:
     language: node_js
     # node_js: node_js
     cache: npm
-    before_script:
-      - brew install n
-      - n 8.14.1
+    before_install:
+      - nvm install 8.14.1
       - node --version
       - npm -version
     script:
