@@ -1,14 +1,35 @@
 os: osx
 osx_image: xcode9.3       # for using jdk8 when building for Android
+node_js:
+  - "8.14.1"
 
 branches:
-  only: ["staging"]
+  only:
+    - staging
 
-install:
-  - npm install
-  - cd ios && pod install
+jobs:
+  include:
+    -stage: "Install node dependencies"
+    language: node_js
+    node_js: node_js
+    cache: npm
+    script: npm install
 
+    -stage: "Build for iOS"
+    language: node_js
+    node_js: node_js
+    cache: npm
+    script:
+      - cd ios
+      - pod install
+      - cd ..
+      - xcodebuild -project ios/MobileApp.xcodeproj -UseNewBuildSystem=NO -scheme MobileApp -configuration Debug -sdk iphonesimulator -derivedDataPath ios/build
+
+
+    # -stage: "Test on iOS"
+    # language: node_js
+    # node_js: node_js
+    # cache: npm
+    # script:
+    #   - npm run test
   
-script:
-  - npm run ios
-  # - npm run e2e  
