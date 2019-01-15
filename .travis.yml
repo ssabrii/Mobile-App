@@ -29,7 +29,15 @@ jobs:
       - cd ios
       - pod install
       - cd ..
-      - xcodebuild -project ios/MobileApp.xcodeproj -UseNewBuildSystem=NO -scheme MobileApp -configuration Debug -sdk iphonesimulator -derivedDataPath ios/build
+      - |
+        xcodebuild \
+          -project ios/MobileApp.xcodeproj \
+          -UseNewBuildSystem=NO \
+          -scheme MobileApp \
+          -configuration Debug \
+          -sdk iphonesimulator \
+          -derivedDataPath ios/build \
+          > xcode-build.log
 
 
     # -stage: "Test on iOS"
