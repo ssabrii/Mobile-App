@@ -3,10 +3,6 @@ osx_image: xcode9.3       # for using jdk8 when building for Android
 # node_js:
 #   - "8"
 
-before_install:
-  - nvm install 8
-  - node --version
-
 branches:
   only:
     - staging
@@ -15,14 +11,23 @@ jobs:
   include:
     -stage: "Install node dependencies"
     language: node_js
-    node_js: node_js
+    # node_js: node_js
     cache: npm
-    script: npm install
+    before_script:
+      - brew install n
+      - n 8.14.1
+      - node --version
+      - npm -version
+    script:
+      - npm install
 
     -stage: "Build for iOS"
     language: node_js
     # node_js: node_js
     cache: npm
+    before_script:
+      - brew install n
+      - n 8.14.1
     script:
       - cd ios
       - pod install
