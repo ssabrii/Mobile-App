@@ -1,5 +1,6 @@
 os: osx
-osx_image: xcode9.3       # for using jdk8 when building for Android
+#osx_image: xcode9.3       # for using jdk8 when building for Android
+osx_image: xcode9.4       # for osx xcode version
 language: ruby
 branches:
   - staging
