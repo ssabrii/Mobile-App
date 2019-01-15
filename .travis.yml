@@ -1,50 +1,51 @@
 os: osx
-# osx_image: xcode9.3       # for using jdk8 when building for Android
-osx_image: xcode9.4         # for osx xcode version
-
+osx_image: xcode9.3       # for using jdk8 when building for Android
+language: ruby
 branches:
-  only:
-    - staging
+  - staging
 
 jobs:
   include:
-    -stage: "Install node dependencies"
-    language: node_js
-    node_js: ["8"]
-    cache: npm
-    before_install:
-      # - nvm install 8.14.1
-      - node --version
-      - npm -version
-    script:
-      - npm install
+    - stage: setup_all
+      language: node_js
+      node_js: ["8"]
+      cache: npm
+      before_install:
+        # - nvm install 8.14.1
+        - node --version
+        - npm -version
+      script:
+        - npm install
 
-    -stage: "Build for iOS"
-    language: node_js
-    node_js: ["8"]
-    before_install:
-      - node --version
-      - npm -version
-    cache: npm
-    script:
-      - cd ios
-      - pod install
-      - cd ..
-      - |
-        xcodebuild \
-          -project ios/MobileApp.xcodeproj \
-          -UseNewBuildSystem=NO \
-          -scheme MobileApp \
-          -configuration Debug \
-          -sdk iphonesimulator \
-          -derivedDataPath ios/build \
-          -quiet
+    - stage: build_ios
+      language: node_js
+      node_js: ["8"]
+      before_install:
+        - node --version
+        - npm -version
+      cache: npm
+      script:
+        - cd ios
+        - pod install
+        - cd ..
+        - |
+          xcodebuild \
+            -project ios/MobileApp.xcodeproj \
+            -UseNewBuildSystem=NO \
+            -scheme MobileApp \
+            -configuration Debug \
+            -sdk iphonesimulator \
+            -derivedDataPath ios/build \
+            -quiet
 
 
-    # -stage: "Test on iOS"
-    # language: node_js
-    # node_js: node_js
-    # cache: npm
-    # script:
-    #   - npm run test
+    - stage: test_on_ios
+      language: node_js
+      node_js: node_js
+      cache: npm
+      script:
+        - npm run test
   
+stages:
+  - setup_all
+  - build_ios
