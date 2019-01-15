@@ -1,29 +1,29 @@
 os: osx
 #osx_image: xcode9.3       # for using jdk8 when building for Android
 osx_image: xcode9.4       # for osx xcode version
-language: ruby
 branches:
   - staging
 
 jobs:
   include:
+    - stage: print_versions
+      language: node_js
+      node_js: ["8"]
+      script:
+        - uname -a
+        - xcodebuild -version
+        - java -version
+        - node --version
+        - npm -version
+
     - stage: setup_all
       language: node_js
       node_js: ["8"]
       cache: npm
-      before_install:
-        # - nvm install 8.14.1
-        - node --version
-        - npm -version
       script:
         - npm install
 
     - stage: build_ios
-      language: node_js
-      node_js: ["8"]
-      before_install:
-        - node --version
-        - npm -version
       cache: npm
       script:
         - cd ios
