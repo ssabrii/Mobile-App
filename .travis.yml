@@ -1,0 +1,9 @@
+install:
+  - npm install
+  - cd ios && pod install
+
+  
+  
+script:
+  - npm run ios
+  # - npm run e2e  
