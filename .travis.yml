@@ -12,7 +12,7 @@ before_install:
   - ./scripts/versions.sh
 
 install:
-  - ./scripts/prepare-detox-req.sh
+  - ./scripts/prepare-detox-ci-req.sh
   - npm install
 
 #ios build
