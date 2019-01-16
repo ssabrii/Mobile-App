@@ -1,52 +1,43 @@
 os: osx
 #osx_image: xcode9.3       # for using jdk8 when building for Android
 osx_image: xcode9.4       # for osx xcode version
+node_js: ["8"]
+language: node_js
+
 branches:
-  - staging
-
-jobs:
-  include:
-    - stage: print_versions
-      language: node_js
-      node_js: ["8"]
-      script:
-        - uname -a
-        - xcodebuild -version
-        - java -version
-        - node --version
-        - npm -version
-
-    - stage: setup_all
-      language: node_js
-      node_js: ["8"]
-      cache: npm
-      script:
-        - npm install
-
-    - stage: build_ios
-      cache: npm
-      script:
-        - cd ios
-        - pod install
-        - cd ..
-        - |
-          xcodebuild \
-            -project ios/MobileApp.xcodeproj \
-            -UseNewBuildSystem=NO \
-            -scheme MobileApp \
-            -configuration Debug \
-            -sdk iphonesimulator \
-            -derivedDataPath ios/build \
-            -quiet
+  only:
+    - staging
 
 
-    - stage: test_on_ios
-      language: node_js
-      node_js: node_js
-      cache: npm
-      script:
-        - npm run test
+before_install:
+  - echo "======= START::Versions List::START ========"
+  - uname -a
+  - brew --version
+  - xcodebuild -version
+  - java -version
+  - node --version
+  - npm -version
+  - echo "========= END::Versions List::END =========="
+
+install:
+  - npm install
+
+#ios build
+script:
+  -name: iOS Build
+    - cd ios
+    - pod --no-ansi install
+    - cd ..
+    - |
+      xcodebuild \
+        -project ios/MobileApp.xcodeproj \
+        -UseNewBuildSystem=NO \
+        -scheme MobileApp \
+        -configuration Debug \
+        -sdk iphonesimulator \
+        -derivedDataPath ios/build \
+        -quiet
+
+after_success:
+  - npm run test
   
-stages:
-  - setup_all
-  - build_ios
