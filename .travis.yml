@@ -1,23 +1,15 @@
 os: osx
 #osx_image: xcode9.3       # for using jdk8 when building for Android
 osx_image: xcode9.4       # for osx xcode version
-node_js: ["8"]
 language: node_js
-
+node_js: ["8.14.1"]
 
 branches:
   only:
     - staging
 
 before_install:
-  - echo "======= START::Versions List::START ========"
-  - uname -a
-  - brew --version
-  - xcodebuild -version
-  - java -version
-  - node --version
-  - npm -version
-  - echo "========= END::Versions List::END =========="
+  - ./scripts/versions.sh
 
 install:
   - npm install
@@ -29,8 +21,7 @@ script:
   - cd ..
   - |
     xcodebuild \
-      -project ios/MobileApp.xcodeproj \
-      -UseNewBuildSystem=NO \
+      -workspace ios/MobileApp.xcworkspace \
       -scheme MobileApp \
       -configuration Debug \
       -sdk iphonesimulator \
