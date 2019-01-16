@@ -1,16 +1,31 @@
-This project was bootstrapped with [Create React Native App](https://github.com/react-community/create-react-native-app).
-
-Below you'll find information about performing common tasks. The most recent version of this guide is available [here](https://github.com/react-community/create-react-native-app/blob/master/react-native-scripts/template/README.md).
 
 ## Table of Contents
 
+* [Requerements](#requirements)
+  * [Common](#common)
+  * [iOS](#ios)
+  * [Android](#android)
 * [Available Scripts](#available-scripts)
-  * [npm start](#npm-start)
-  * [npm test](#npm-test)
   * [npm run ios](#npm-run-ios)
   * [npm run android](#npm-run-android)
-* [Writing and Running Tests](#writing-and-running-tests)
-* [Adding Flow](#adding-flow)
+* [Other](#other)
+  * [Writing and Running Tests](#writing-and-running-tests)
+  * [Adding Flow](#adding-flow)
+
+## Requirements for Running
+### Common
+  * `node 8.14.1` with `npm 6.4.1`
+### iOS
+  * `macOS 10.13 High Sierra` or higher
+  * `Homebrew` (http://brew.sh)
+  * `CocoaPods` (*brew install pods*)
+  * `Xcode 9.4.1`
+### Android
+  * `Java 1.8` (jdk 8)
+  * `Android Studio` *(optional)*
+
+---
+ 
 
 ## Available Scripts
 
@@ -51,11 +66,13 @@ Like `npm start`, but also attempts to open your app on a connected Android devi
 2. Add the Genymotion tools directory to your path (instructions for [Mac](http://osxdaily.com/2014/08/14/add-new-path-to-path-command-line/), [Linux](http://www.computerhope.com/issues/ch001647.htm), and [Windows](https://www.howtogeek.com/118594/how-to-edit-your-system-path-for-easy-command-line-access/)).
 3. Make sure that you can run adb from your terminal.
 
-## Writing and Running Tests
+## Other
+
+### Writing and Running Tests
 
 This project is set up to use [jest](https://facebook.github.io/jest/) for tests. You can configure whatever testing strategy you like, but jest works out of the box. Create test files in directories called `__tests__` or with the `.test` extension to have the files loaded by jest. See the [the template project](https://github.com/react-community/create-react-native-app/blob/master/react-native-scripts/template/App.test.js) for an example test. The [jest documentation](https://facebook.github.io/jest/docs/en/getting-started.html) is also a wonderful resource, as is the [React Native testing tutorial](https://facebook.github.io/jest/docs/en/tutorial-react-native.html).
 
-## Adding Flow
+### Adding Flow
 
 Flow is a static type checker that helps you write code with fewer bugs. Check out this [introduction to using static types in JavaScript](https://medium.com/@preethikasireddy/why-use-static-types-in-javascript-part-1-8382da1e0adb) if you are new to this concept.
 

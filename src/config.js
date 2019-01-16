@@ -11,6 +11,8 @@ export let xDeviceVersion;
 export let ROOMS_XML_CURRENCY;//const ROOMS_XML_CURRENCY = 'EUR';
 
 if (__DEV__) {
+    import('./utils/reactotronLogging').then(() => console.log('Reactotron Configured'))
+
     // alertMessage = "Debug1111 ----- ";
     // apiHost = 'https://staging.locktrip.com/api/';//'http://192.168.203.165:8080/';
     // imgHost = 'https://static.locktrip.com/';
