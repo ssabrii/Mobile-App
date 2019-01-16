@@ -4,10 +4,10 @@ osx_image: xcode9.4       # for osx xcode version
 node_js: ["8"]
 language: node_js
 
+
 branches:
   only:
     - staging
-
 
 before_install:
   - echo "======= START::Versions List::START ========"
@@ -24,19 +24,18 @@ install:
 
 #ios build
 script:
-  -name: iOS Build
-    - cd ios
-    - pod --no-ansi install
-    - cd ..
-    - |
-      xcodebuild \
-        -project ios/MobileApp.xcodeproj \
-        -UseNewBuildSystem=NO \
-        -scheme MobileApp \
-        -configuration Debug \
-        -sdk iphonesimulator \
-        -derivedDataPath ios/build \
-        -quiet
+  - cd ios
+  - pod --no-ansi install
+  - cd ..
+  - |
+    xcodebuild \
+      -project ios/MobileApp.xcodeproj \
+      -UseNewBuildSystem=NO \
+      -scheme MobileApp \
+      -configuration Debug \
+      -sdk iphonesimulator \
+      -derivedDataPath ios/build \
+      -quiet
 
 after_success:
   - npm run test
