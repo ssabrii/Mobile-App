@@ -40,5 +40,5 @@ function debugConfig() {
 }
   
 //debugConfig
-//rconfig()
+rconfig()
 //overrideLogs()
