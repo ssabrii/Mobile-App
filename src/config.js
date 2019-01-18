@@ -145,5 +145,8 @@ switch (LT_CFG) {
 
 
 if (__DEV__) {
-    // import('./utils/reactotronLogging').then(() => console.log('Reactotron Configured'))
+        import('./utils/reactotronLogging').then((module) => {
+            console.log('Reactotron Configured', {module});
+        }
+    )
 }

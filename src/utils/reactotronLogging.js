@@ -4,7 +4,7 @@ import Reactotron from 'reactotron-react-native'
 function rconfig() {
   Reactotron
     .configure({
-      name: "React Native Demo"
+      name: "Locktrip - Mobile Market aka Mobile-App"
     })
     .useReactNative({
       asyncStorage: false, // there are more options to the async storage.
@@ -15,7 +15,8 @@ function rconfig() {
       errors: { veto: (stackFrame) => false }, // or turn it off with false
       overlay: false, // just turning off overlay
     })
-    .connect();
+    .connect()
+    .clear();
 } 
   
 function overrideLogs() {
@@ -40,5 +41,5 @@ function debugConfig() {
 }
   
 //debugConfig
-//rconfig()
+rconfig()
 //overrideLogs()
