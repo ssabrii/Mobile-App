@@ -15,6 +15,7 @@
     "jest-react-native": "^18.0.0",
     "mocha": "^5.2.0",
     "react-test-renderer": "16.2.0",
+    "reactotron-react-native": "^2.1.4",
     "redux-devtools-extension": "^2.13.5",
     "redux-logger": "^3.0.6"
   },

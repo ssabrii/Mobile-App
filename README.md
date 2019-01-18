@@ -1,11 +1,21 @@
 
 ## Table of Contents
 
-* [Requerements](#requirements)
+* [Requirements to Run Mobile-App](#requirements-to-run-mobile-app)
   * [Common](#common)
-  * [iOS](#ios)
-  * [Android](#android)
-* [Staging](#staging)
+  * [For Android - <small>macOS and Windows</small>](#for-android)
+  * [For iOS - <small>macOS only</small>](#for-ios)
+* [Steps to Run](#steps-to-run)
+  * [Windows](#windows)
+  * [macOS](#macos)
+* [Additional Requirements to Run E2E Tests](#additional-requirements-to-run-e2e-tests)
+  * [E2E on Android - <small>macOS and Windows</small>](#e2e-on-android)
+  * [E2E on iOS - <small>macOS only</small>](#e2e-on-ios)
+* [Staging and Continuous Integration](#staging-and-continuous-integration)
+* [Notes from Developers](#notes-from-developers)
+
+---
+### Default information in README.md
 * [Available Scripts](#available-scripts)
   * [npm run ios](#npm-run-ios)
   * [npm run android](#npm-run-android)
@@ -13,24 +23,56 @@
   * [Writing and Running Tests](#writing-and-running-tests)
   * [Adding Flow](#adding-flow)
 
-## Requirements for Running
-### Common
-  * `node 8.14.1` with `npm 6.4.1`
-### iOS
-  * `macOS 10.13 High Sierra` or higher
-  * `Homebrew` (http://brew.sh)
-  * `CocoaPods` (*brew install pods*)
-  * `Xcode 9.4.1`
-### Android
-  * `Java 1.8` (jdk 8)
-  * `Android Studio` *(optional)*
+## Requirements to Run Mobile-App
+### Common 
+ * `node 8.14.1` (with `npm 6.4.1`)  
+  <small>NodeJS version 8.15.x also is likely to work</small>
+  * ninja (for Android)  
+  <small>macOS - `brew install ninja`, Windows - instructions [here](https://github.com/rwols/CMakeBuilder/wiki/Ninja-for-Windows-Installation-Instructions)</small>
+#### For Android
+<small>(macOS and Windows)</small>  
+    * `Java 1.8` (jdk 8)  
+    * `Android Studio` *(optional)*
+#### For iOS
+<small>(macOS only)</small>  
+    * `macOS 10.13 High Sierra` or higher <small>(not tested on El Capitan and before)</small>  
+    * `Homebrew` - http://brew.sh  
+    * `CocoaPods` (`brew install pods`)  
+    * `Xcode 9.4.1`
 
+## Steps to Run
+### Windows
+  (1) `git clone git://github.com/LockTrip/Mobile-app.git`  
+  (2) `cd <project-folder>` for example `cd C:\projects\Mobile-App`  
+  (3) `npm install`  
+  (4) `react-native run-android` 
+### macOS
+(1) `git clone git://github.com/LockTrip/Mobile-app.git`  
+(2) `cd <project-folder>` for example `cd $HOME$/projects/Mobile-App`  
+(3) `npm install`  
+(4) `react-native run-ios` or `react-native run-android`
 
-### Staging
-Using Travis CI with `.travis.yml` setup.
-
----
+## Additional Requirements to Run E2E Tests
+E2E tests (aka integration tests) are using `detox` (with Grey Box vs the common Black Box approach) with `mocha`.
+### E2E on Android
+ * ???
+### E2E on iOS (macOS only)
+  * `brew tap wix/brew`
+  * `brew install applesimutils`
  
+### Staging and Continuous Integration
+First application of CI is using Travis CI http://travis-ci.org.
+Later on to be applied in this branch.
+
+## Notes from developers  
+**Jinkai note on Building with Xcode 10:  
+BUILDING ISSUE FOR IOS 12, XCODE 10.1  
+https://zivost.com/blog/xcode-10-causes-haywire-for-react-native-developers/
+---
+---
+---
+# Default Information
+---
 
 ## Available Scripts
 
@@ -94,7 +136,3 @@ Now you can run `npm run flow` (or `yarn flow`) to check the files for type erro
 You can optionally use a [plugin for your IDE or editor](https://flow.org/en/docs/editors/) for a better integrated experience.
 
 To learn more about Flow, check out [its documentation](https://flow.org/).
-
-
-BUILDING ISSUE FOR IOS 12, XCODE 10.1
-https://zivost.com/blog/xcode-10-causes-haywire-for-react-native-developers/
