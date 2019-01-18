@@ -197,7 +197,7 @@ class Profile extends Component {
                             <Text style={styles.navItemText}>Switch to Hosting</Text>
                             <Image resizeMode="stretch" source={require('../../../assets/png/Profile/icon-switch.png')} style={styles.navIcon} />
                         </TouchableOpacity> */}
-                        <TouchableOpacity onPress={this.onSendToken} style={styles.navItem}>
+                        <TouchableOpacity testID={'profile.tokens'} onPress={this.onSendToken} style={styles.navItem}>
                             <Text style={styles.navItemText}>Send Tokens</Text>
                             <Image resizeMode="stretch" source={require('../../../assets/png/Profile/icon-switch.png')} style={styles.navIcon} />
                         </TouchableOpacity>
