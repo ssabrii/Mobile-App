@@ -1,7 +1,7 @@
 import { BackHandler, FlatList, Image, Platform, StyleSheet, Text, TouchableOpacity, View } from 'react-native';
 import FontAwesome, { Icons } from 'react-native-fontawesome';
 import React, { Component } from 'react';
-import { domainPrefix, imgHost } from '../../../config';
+import { cacheDomainPrefix, imgHost } from '../../../config';
 
 import Dash from 'react-native-dash';
 import PropTypes from 'prop-types';

@@ -5,7 +5,7 @@ import { StackActions, NavigationActions } from 'react-navigation';
 import { setCurrency } from '../../redux/action/Currency'
 
 import SplashScreen from 'react-native-smart-splash-screen';
-import { domainPrefix } from '../../config';
+import { cacheDomainPrefix } from '../../config';
 import { bindActionCreators } from 'redux';
 
 import { getCountries } from '../../redux/action/Country'
@@ -50,8 +50,8 @@ class AppLoading extends Component {
         console.log("currency", currency);
 
         const keys = await AsyncStorage.getAllKeys();
-        const isLoggedIn = keys.includes(`${domainPrefix}.auth.locktrip`) &&
-                        keys.includes(`${domainPrefix}.auth.username`);
+        const isLoggedIn = keys.includes(`${cacheDomainPrefix}.auth.locktrip`) &&
+                        keys.includes(`${cacheDomainPrefix}.auth.username`);
 
         if (Platform.OS === 'ios') {
         } else if (Platform.OS === 'android') {

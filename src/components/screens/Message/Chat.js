@@ -16,7 +16,7 @@ import MessageView from './MessageView';
 import ProgressDialog from '../../atoms/SimpleDialogs/ProgressDialog';
 import PropTypes from 'prop-types';
 import Toast from 'react-native-simple-toast';
-import { domainPrefix } from '../../../config';
+import { cacheDomainPrefix } from '../../../config';
 import moment from 'moment';
 import requester from '../../../initDependencies';
 import styles from './styles';
@@ -66,7 +66,7 @@ class Chat extends Component {
 
     async componentDidMount() {
         const { params } = this.props.navigation.state;
-        this.state.username = await AsyncStorage.getItem(`${domainPrefix}.auth.username`)
+        this.state.username = await AsyncStorage.getItem(`${cacheDomainPrefix}.auth.username`)
         //here is the method to load all chats related to this id = 68
 
         this.setState({ showProgress: true });

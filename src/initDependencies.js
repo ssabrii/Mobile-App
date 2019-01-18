@@ -5,7 +5,7 @@ import Requester from 'locktrip-service-layer';
 
 let config = {
     "apiHost": apiHost,
-    "domainPrefix": cacheDomainPrefix
+    "cacheDomainPrefix": cacheDomainPrefix
 };
 
 let requester = new Requester(AsyncStorage, config, { "X-Device-Version": xDeviceVersion });

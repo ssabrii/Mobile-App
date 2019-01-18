@@ -13,7 +13,7 @@ import GetStartedImage from '../../atoms/GetStartedImage';
 import Image from 'react-native-remote-svg';
 import ProgressDialog from '../../atoms/SimpleDialogs/ProgressDialog';
 import SplashPNG from '../../../assets/png/locktrip_logo.png';
-import { domainPrefix, basePath } from '../../../config';
+import { cacheDomainPrefix, basePath } from '../../../config';
 import requester from '../../../initDependencies';
 import styles from './styles';
 import LoginLocationDialog from '../../atoms/LoginLocationDialog'
@@ -61,9 +61,9 @@ class Welcome extends Component {
                     console.log("Success");
                     res.body.then(data => {
                         console.log(data);
-                        AsyncStorage.setItem(`${domainPrefix}.auth.locktrip`, data.Authorization);
+                        AsyncStorage.setItem(`${cacheDomainPrefix}.auth.locktrip`, data.Authorization);
                         // TODO: Get first name + last name from response included with Authorization token (Backend)
-                        AsyncStorage.setItem(`${domainPrefix}.auth.username`, this.fbInfo.email);
+                        AsyncStorage.setItem(`${cacheDomainPrefix}.auth.username`, this.fbInfo.email);
                         this.props.navigation.navigate('MainScreen');
                     });
                 } else {
@@ -113,9 +113,9 @@ class Welcome extends Component {
                     console.log("Success");
                     res.body.then(data => {
                         console.log(data);
-                        AsyncStorage.setItem(`${domainPrefix}.auth.locktrip`, data.Authorization);
+                        AsyncStorage.setItem(`${cacheDomainPrefix}.auth.locktrip`, data.Authorization);
                         // // TODO: Get first name + last name from response included with Authorization token (Backend)
-                        // AsyncStorage.setItem(`${domainPrefix}.auth.username`, fbInfo.email);
+                        // AsyncStorage.setItem(`${cacheDomainPrefix}.auth.username`, fbInfo.email);
                         this.props.navigation.navigate('MainScreen');
                     });
                 } else {
