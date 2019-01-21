@@ -2,25 +2,25 @@ import Reactotron, { openInEditor } from 'reactotron-react-native'
 import { reactotronRedux } from 'reactotron-redux'
 
 function reactoTronConfig() {
-  const reactotron = Reactotron
-    .configure({
-      name: "Locktrip - Mobile Market aka Mobile-App"
-    })
+  let reactotronInstance = Reactotron
+    .configure({name: "Locktrip - Mobile Market aka Mobile-App"})
     .useReactNative({
-      asyncStorage: true, // there are more options to the async storage.
-      networking: { // optionally, you can turn it off with false.
-        ignoreUrls: /symbolicate/
-      },
-      editor: true, // there are more options to editor
-      errors: { veto: (stackFrame) => true }, // or turn it off with false
-      overlay: true, // just turning off overlay
+      // asyncStorage: false, // there are more options to the async storage.
+      // networking: { // optionally, you can turn it off with false.
+      //   ignoreUrls: /symbolicate/
+      // },
+      // editor: false, // there are more options to editor
+      // errors: { veto: (stackFrame) => true }, // or turn it off with false
+      // overlay: false, // just turning off overlay
     })
-    .use(reactotronRedux())
+    .use(reactotronRedux({
+      // onRestore: Immutable
+    }))
     .use(openInEditor())
     .connect()
     .clear();
 
-    return reactotron;
+    console.tron = Reactotron;
 } 
   
 function overrideLogs() {
@@ -40,10 +40,5 @@ function overrideLogs() {
 	  },100)
 }
 
-function debugConfig() {
-	
-}
-  
-// Debug Logging Configuration
-//overrideLogs() //TODO: An extra that might not be used in the future (Alex K)
-export default reactoTronConfig()
+// exports
+export default reactoTronConfig;
