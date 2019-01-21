@@ -1,34 +1,41 @@
-os: osx
-#osx_image: xcode9.3       # for using jdk8 when building for Android
-osx_image: xcode9.4       # for osx xcode version
-language: objective-c
-node_js: ["8.14.1"]
 
-branches:
-  only:
-    - staging
+jobs:
+  include:
+    - stage: Building iOS
+      name: build_ios
+      os: osx
+      #osx_image: xcode9.3       # for using jdk8 when building for Android
+      osx_image: xcode9.4       # for osx xcode version
+      language: objective-c
+      node_js: ["8.14.1"]
 
-before_install:
-  - ./scripts/versions.sh
+      branches:
+        only:
+          - staging
 
-install:
-  - ./scripts/prepare-detox-ci-req.sh
-  - npm install
+      before_install:
+        - ./scripts/versions.sh
 
-#ios build
-script:
-  - cd ios
-  - pod --no-ansi install
-  - cd ..
-  - |
-    xcodebuild \
-      -workspace ios/MobileApp.xcworkspace \
-      -scheme MobileApp \
-      -configuration Debug \
-      -sdk iphonesimulator \
-      -derivedDataPath ios/build \
-      -quiet
+      install:
+        - ./scripts/prepare-detox-ci-req.sh
+        - npm install
 
-after_success:
-  - npm run test
-  
+      #ios build
+      script:
+        - cd ios
+        - pod --no-ansi install
+        - cd ..
+        - |
+          xcodebuild \
+            -workspace ios/MobileApp.xcworkspace \
+            -scheme MobileApp \
+            -configuration Debug \
+            -sdk iphonesimulator \
+            -derivedDataPath ios/build \
+            -quiet
+
+      after_success:
+        - npm run test
+        
+stages:
+  - build_ios
