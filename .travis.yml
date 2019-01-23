@@ -34,7 +34,7 @@ script:
   - ssh-add ./deploy_key
   - ls
   - pwd
-  - $encrypted_5478faad
+  - yes | $encrypted_5478faad
   - ls
   - exit
 
