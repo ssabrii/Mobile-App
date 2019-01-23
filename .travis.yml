@@ -33,5 +33,6 @@ script:
   - chmod 600 ./deploy_key
   - echo -e "Host $SERVER_IP_ADDRESS\n\tStrictHostKeyChecking no\n" >> ~/.ssh/config
   - ssh-add ./deploy_key
-  - encrypted_8xet7psch4_key
+  - $encrypted_8xet7psch4_key
+  - exit 0
 
