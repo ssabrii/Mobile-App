@@ -4,7 +4,7 @@ node_js:
   - 8.14.1
 language: objective-c
 before_install:
-  - secure: "openssl aes-256-cbc -K $encrypted_5ada4aafeac8_key -iv $encrypted_5ada4aafeac8_iv -in deploy_key.enc -out ./deploy_key -d"
+  - openssl aes-256-cbc -K $encrypted_5ada4aafeac8_key -iv $encrypted_5ada4aafeac8_iv -in deploy_key.enc -out ./deploy_key -d
 # install: npm i
 install: true
 before_script:
@@ -32,6 +32,6 @@ script:
   - chmod 600 ./deploy_key
   - echo -e "Host $SERVER_IP_ADDRESS\n\tStrictHostKeyChecking no\n" >> ~/.ssh/config
   - ssh-add ./deploy_key
-  - echo $encr_87adf54
+  - echo $encrypted_5478faad
   - exit 0
 
