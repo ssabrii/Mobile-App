@@ -1,41 +1,56 @@
-
 jobs:
   include:
-    - stage: Building iOS
-      name: build_ios
-      os: osx
-      #osx_image: xcode9.3       # for using jdk8 when building for Android
-      osx_image: xcode9.4       # for osx xcode version
-      language: objective-c
-      node_js: ["8.14.1"]
 
-      branches:
-        only:
-          - staging
+  - stage: Building iOS
+    name: build_ios
+    os: osx
+    osx_image: xcode9.4
+    language: objective-c
+    node_js:
+    - 8.14.1
+    before_install:
+    - "./scripts/versions.sh"
+    - "./scripts/prepare-detox-ci-req.sh"
+    install: npm
+    script:
+    - cd ios
+    - pod --no-ansi install
+    - cd ..
+    - |
+      xcodebuild \
+        -workspace ios/MobileApp.xcworkspace \
+        -scheme MobileApp \
+        -configuration Debug \
+        -sdk iphonesimulator \
+        -derivedDataPath ios/build \
+        -quiet
 
-      before_install:
-        - ./scripts/versions.sh
+  - stage: Test iOS Build
+    name: test_ios_build
+    os: osx
+    osx_image: xcode9.4
+    language: objective-c
+    node_js:
+    - 8.14.1
+    script:
+    - npm run test
 
-      install:
-        - ./scripts/prepare-detox-ci-req.sh
-        - npm install
+  - stage: Deploy iOS Build
+    name: deploy_ios
+    before_install:
+    - openssl aes-256-cbc -K $encrypted_5ada4aafeac8_key -iv $encrypted_5ada4aafeac8_iv
+      -in deploy_key.enc -out ./deploy_key -d
+    script:
+    - npm run test
 
-      #ios build
+  - stage: Test Deploy
+      name: test_depoly
       script:
-        - cd ios
-        - pod --no-ansi install
-        - cd ..
-        - |
-          xcodebuild \
-            -workspace ios/MobileApp.xcworkspace \
-            -scheme MobileApp \
-            -configuration Debug \
-            -sdk iphonesimulator \
-            -derivedDataPath ios/build \
-            -quiet
+      - eval "$(ssh-agent -s)"
+      - chmod 600 ./deploy_key
+      - echo -e "Host $SERVER_IP_ADDRESS\n\tStrictHostKeyChecking no\n" >> ~/.ssh/config
+      - ssh-add ./deploy_key
+      - encrypted_8xet7psch4_key
 
-      after_success:
-        - npm run test
-        
 stages:
-  - build_ios
+  - test_deploy
