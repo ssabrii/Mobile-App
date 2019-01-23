@@ -1,17 +1,17 @@
+os: osx
+osx_image: xcode9.4
+node_js:
+- 8.14.1
+
 jobs:
   include:
-
     - stage: Building iOS
       name: build_ios
-      os: osx
-      osx_image: xcode9.4
       language: objective-c
-      node_js:
-      - 8.14.1
-      before_install:
+      install: npm i
+      before_script:
       - "./scripts/versions.sh"
       - "./scripts/prepare-detox-ci-req.sh"
-      install: npm
       script:
       - cd ios
       - pod --no-ansi install
@@ -24,17 +24,10 @@ jobs:
           -sdk iphonesimulator \
           -derivedDataPath ios/build \
           -quiet
-
     - stage: Test iOS Build
       name: test_ios_build
-      os: osx
-      osx_image: xcode9.4
-      language: objective-c
-      node_js:
-      - 8.14.1
       script:
       - npm run test
-
     - stage: Deploy iOS Build
       name: deploy_ios
       before_install:
@@ -42,7 +35,6 @@ jobs:
           -in deploy_key.enc -out ./deploy_key -d
       script:
         - npm run test
-
     - stage: Test Deploy
       name: test_depoly
       script:
