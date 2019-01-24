@@ -11,6 +11,7 @@
 * [Additional Requirements to Run E2E Tests](#additional-requirements-to-run-e2e-tests)
   * [E2E on Android - <small>macOS and Windows</small>](#e2e-on-android)
   * [E2E on iOS - <small>macOS only</small>](#e2e-on-ios)
+* [Using Reactotron](#using-reactotron)
 * [Staging and Continuous Integration](#staging-and-continuous-integration)
 * [Notes from Developers](#notes-from-developers)
 
@@ -25,10 +26,12 @@
 
 ## Requirements to Run Mobile-App
 ### Common 
- * `node 8.14.1` (with `npm 6.4.1`)  
+  * `node 8.14.1` (with `npm 6.4.1`)  
   <small>NodeJS version 8.15.x also is likely to work</small>
   * ninja (for Android)  
   <small>macOS - `brew install ninja`, Windows - instructions [here](https://github.com/rwols/CMakeBuilder/wiki/Ninja-for-Windows-Installation-Instructions)</small>
+  * react-native-cli
+  <small>npm install -g react-native-cli</small>
 #### For Android
 <small>(macOS and Windows)</small>  
     * `Java 1.8` (jdk 8)  
@@ -60,6 +63,11 @@ E2E tests (aka integration tests) are using `detox` (with Grey Box vs the common
   * `brew tap wix/brew`
   * `brew install applesimutils`
  
+## Using Reactotron
+  * To start on Windows (with Android):
+  1. Run `scripts/windows/reactotron-start.bat`
+  2. Start project with `react-native run-android`
+
 ### Staging and Continuous Integration
 First application of CI is using Travis CI http://travis-ci.org.
 Later on to be applied in this branch.
