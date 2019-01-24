@@ -11,7 +11,9 @@
 * [Additional Requirements to Run E2E Tests](#additional-requirements-to-run-e2e-tests)
   * [E2E on Android - <small>macOS and Windows</small>](#e2e-on-android)
   * [E2E on iOS - <small>macOS only</small>](#e2e-on-ios)
-* [Using Reactotron](#using-reactotron)
+* [Tools](#tools)
+  * [Scripts](#scripts)
+  * [Reactotron](#reactotron)
 * [Staging and Continuous Integration](#staging-and-continuous-integration)
 * [Notes from Developers](#notes-from-developers)
 
@@ -59,13 +61,20 @@
 E2E tests (aka integration tests) are using `detox` (with Grey Box vs the common Black Box approach) with `mocha`.
 ### E2E on Android
  * ???
-### E2E on iOS (macOS only)
+### E2E on iOS
+<small>(macOS only)</small>
   * `brew tap wix/brew`
   * `brew install applesimutils`
  
-## Using Reactotron
+## Tools
+### Scripts
+Scripts are found at:
+* `scripts\windows` for Windows
+* `scripts/` for macOS
+
+### Reactotron
   * To start on Windows (with Android):
-  1. Run `scripts/windows/reactotron-start.bat`
+  1. Run `scripts\windows\reactotron-start.bat`
   2. Start project with `react-native run-android`
 
 ### Staging and Continuous Integration
