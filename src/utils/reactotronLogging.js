@@ -3,7 +3,7 @@ import { reactotronRedux } from 'reactotron-redux'
 
 function reactoTronConfig() {
   let reactotronInstance = Reactotron
-    .configure({name: "Locktrip - Mobile Market aka Mobile-App"})
+    .configure({name: "Locktrip - Mobile Market aka Mobile-App", host: 'localhost'})
     .useReactNative({
       // asyncStorage: false, // there are more options to the async storage.
       // networking: { // optionally, you can turn it off with false.
