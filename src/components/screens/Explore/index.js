@@ -16,7 +16,7 @@ import DateAndGuestPicker from '../../organisms/DateAndGuestPicker';
 import RNPickerSelect from 'react-native-picker-select';//eslint-disable-line
 import SearchBar from '../../molecules/SearchBar';
 import Toast from 'react-native-easy-toast';//eslint-disable-line
-import { domainPrefix } from '../../../config';
+import { cacheDomainPrefix } from '../../../config';
 import requester from '../../../initDependencies';
 import styles from './styles';
 import { userInstance } from '../../../utils/userInstance';
@@ -99,8 +99,8 @@ class Explore extends Component {
 
 
     async componentWillMount() {
-        const token_value = await AsyncStorage.getItem(`${domainPrefix}.auth.locktrip`);
-        const email_value = await AsyncStorage.getItem(`${domainPrefix}.auth.username`);
+        const token_value = await AsyncStorage.getItem(`${cacheDomainPrefix}.auth.locktrip`);
+        const email_value = await AsyncStorage.getItem(`${cacheDomainPrefix}.auth.username`);
         this.setState({
             token: token_value,
             email: email_value,
@@ -112,7 +112,7 @@ class Explore extends Component {
             res.body.then((data) => {
                 console.log('componentWillMount', data);
                 if (email_value == undefined || email_value == null || email_value == "") {
-                    AsyncStorage.setItem(`${domainPrefix}.auth.username`, data.email);
+                    AsyncStorage.setItem(`${cacheDomainPrefix}.auth.username`, data.email);
                     this.setState({
                         email: email_value,
                     });
@@ -371,9 +371,15 @@ class Explore extends Component {
                 >
                     {
                         this.state.cities.map((result, i) => { //eslint-disable-line
+                            const testID = __DEV__
+                                ? String(result.query).replace(',','_').replace(' ','_')
+                                : 'explore.auto-complete'+result.id
+                            ;
+
                             return (//eslint-disable-line
                                 <TouchableOpacity
                                     key={result.id}
+                                    testID={testID}
                                     style={i == nCities - 1 ? [styles.autocompleteTextWrapper, {borderBottomWidth: 1, elevation: 1}] : styles.autocompleteTextWrapper}
                                     onPress={() => this.handleAutocompleteSelect(result.id, result.query)}
                                 >

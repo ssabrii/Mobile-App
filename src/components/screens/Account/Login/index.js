@@ -18,7 +18,7 @@ import styles from './styles';
 import { validateEmail, validatePassword1 } from '../../../../utils/validation';
 import SmartInput from '../../../atoms/SmartInput';
 import ProgressDialog from '../../../atoms/SimpleDialogs/ProgressDialog';
-import { domainPrefix } from '../../../../config';
+import { cacheDomainPrefix } from '../../../../config';
 import requester from '../../../../initDependencies';
 import LoginLocationDialog from '../../../atoms/LoginLocationDialog'
 import LoginEmailVerifyDialog from '../../../atoms/LoginEmailVerifyDialog'
@@ -74,9 +74,9 @@ class Login extends Component {
             this.setState({ showProgress: false });
             if (res.success) {
                 res.body.then(data => {
-                    AsyncStorage.setItem(`${domainPrefix}.auth.locktrip`, data.Authorization);
+                    AsyncStorage.setItem(`${cacheDomainPrefix}.auth.locktrip`, data.Authorization);
                     // TODO: Get first name + last name from response included with Authorization token (Backend)
-                    AsyncStorage.setItem(`${domainPrefix}.auth.username`, user.email);
+                    AsyncStorage.setItem(`${cacheDomainPrefix}.auth.username`, user.email);
                     // this.props.navigation.navigate('MainScreen');
                     let resetAction = StackActions.reset({
                         index: 0,
@@ -150,6 +150,7 @@ class Login extends Component {
                         <View style={styles.inputView}>
                             <SmartInput
                                 keyboardType="email-address"
+                                testID={'login.email'}
                                 autoCorrect={false}
                                 autoCapitalize="none"
                                 value={email}
@@ -163,6 +164,7 @@ class Login extends Component {
                         <View style={styles.inputView}>
                             <SmartInput
                                 secureTextEntry
+                                testID={'login.password'}
                                 autoCorrect={false}
                                 autoCapitalize="none"
                                 value={password}
@@ -175,6 +177,7 @@ class Login extends Component {
 
                         <TouchableOpacity
                             style={styles.buttonWrapper}
+                            testID={"login.login_button"}
                             disabled={!validateEmail(email) || !validatePassword1(password)}
                             onPress={() => this.onClickLogIn()}
                         >

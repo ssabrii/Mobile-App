@@ -25,7 +25,7 @@ import  { userInstance } from '../../../utils/userInstance';
 import requester from '../../../initDependencies';
 import _ from 'lodash';
 import styles from './styles';
-import { apiHost, domainPrefix, imgHost, PUBLIC_URL } from '../../../config';
+import { apiHost, cacheDomainPrefix, imgHost, PUBLIC_URL } from '../../../config';
 
 class EditUserProfile extends Component {
 
@@ -189,7 +189,7 @@ class EditUserProfile extends Component {
                 path: '/'
             }
         };
-        const token_value = await AsyncStorage.getItem(`${domainPrefix}.auth.locktrip`);
+        const token_value = await AsyncStorage.getItem(`${cacheDomainPrefix}.auth.locktrip`);
         ImagePicker.showImagePicker(options, (response) => {
             if (response.didCancel) {
                 console.log('User cancelled image picker');

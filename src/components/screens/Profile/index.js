@@ -174,34 +174,34 @@ class Profile extends Component {
                     </TouchableOpacity>
 
                     <View>
-                        <TouchableOpacity onPress={() => navigate('SimpleUserProfile')} style={styles.navItem}>
+                        <TouchableOpacity testID={'profile.view'} onPress={() => navigate('SimpleUserProfile')} style={styles.navItem}>
                             <Text style={styles.navItemText}>View Profile</Text>
                         </TouchableOpacity>
-                        <TouchableOpacity onPress={() => navigate('EditUserProfile', { updateGender: this.updateGender })} style={styles.navItem}>
+                        <TouchableOpacity testID={'profile.edit'} onPress={() => navigate('EditUserProfile', { updateGender: this.updateGender })} style={styles.navItem}>
                             <Text style={styles.navItemText}>Edit Profile</Text>
                             <Image resizeMode="stretch" source={require('../../../assets/png/Profile/icon-user.png')} style={styles.navIcon} />
                         </TouchableOpacity>
-                        <TouchableOpacity onPress={() => navigate('Notifications')} style={styles.navItem}>
+                        <TouchableOpacity testID={'profile.notifications'} onPress={() => navigate('Notifications')} style={styles.navItem}>
                             <Text style={styles.navItemText}>Notifications</Text>
                             <Image resizeMode="stretch" source={require('../../../assets/png/Profile/icon-bell.png')} style={styles.navIcon} />
                         </TouchableOpacity>
-                        <TouchableOpacity onPress={this.navigateToPaymentMethods} style={styles.navItem}>
+                        <TouchableOpacity testID={'profile.payment'} onPress={this.navigateToPaymentMethods} style={styles.navItem}>
                             <Text style={styles.navItemText}>Payment Methods</Text>
                             <Image resizeMode="stretch" source={require('../../../assets/png/Profile/icon-payment.png')} style={styles.navIcon} />
                         </TouchableOpacity>
-                        <TouchableOpacity onPress={this.onCurrency} style={styles.navItem}>
+                        <TouchableOpacity testID={'profile.currency'} onPress={this.onCurrency} style={styles.navItem}>
                             <Text style={styles.navItemText}>Currency</Text>
                             <Text style={styles.navCurrency}>{currency}</Text>
                         </TouchableOpacity>
-                        {/* <TouchableOpacity onPress={this.showToast} style={styles.navItem}>
+                        {/* <TouchableOpacity testID={'profile.hosting'} onPress={this.showToast} style={styles.navItem}>
                             <Text style={styles.navItemText}>Switch to Hosting</Text>
                             <Image resizeMode="stretch" source={require('../../../assets/png/Profile/icon-switch.png')} style={styles.navIcon} />
                         </TouchableOpacity> */}
-                        <TouchableOpacity onPress={this.onSendToken} style={styles.navItem}>
+                        <TouchableOpacity testID={'profile.tokens'} onPress={this.onSendToken} style={styles.navItem}>
                             <Text style={styles.navItemText}>Send Tokens</Text>
                             <Image resizeMode="stretch" source={require('../../../assets/png/Profile/icon-switch.png')} style={styles.navIcon} />
                         </TouchableOpacity>
-                        <TouchableOpacity onPress={this.logout} style={styles.navItem}>
+                        <TouchableOpacity testID={'profile.logout'} onPress={this.logout} style={styles.navItem}>
                             <Text style={styles.navItemText}>Log Out</Text>
                         </TouchableOpacity>
                     </View>
