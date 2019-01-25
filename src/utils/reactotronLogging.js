@@ -1,4 +1,4 @@
-import Reactotron, {openInEditor} from 'reactotron-react-native'
+import Reactotron, {openInEditor,trackGlobalErrors} from 'reactotron-react-native'
 
 Reactotron
   .configure({
@@ -15,5 +15,8 @@ Reactotron
     // overlay: false, // just turning off overlay
   })
   .use(openInEditor())
+  .use(trackGlobalErrors())
   .connect()
   .clear();
+
+  console.tron = Reactotron;
