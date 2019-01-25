@@ -104,3 +104,5 @@ else {
     
 
 }
+
+import('./utils/reactotronLogging').then(() => console.log('Reactotron Configured'))
