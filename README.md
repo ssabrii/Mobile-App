@@ -3,6 +3,7 @@
 2. Create a new project
 ```react-native init "Mobile-App"```
 3. Copy files from RN.0.55 project base (current master)
+4+ Quoted from chat: "Removed unnecessary libraries, remove react-native-awesome-font using react-native-vector-icon, and update libraries to latest."
 
 *Recommended approach:*  
 *1. Leave this one as a backup - just-in-case.*  
