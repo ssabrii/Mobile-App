@@ -5,8 +5,7 @@ import {
     ViewPropTypes,
     TouchableWithoutFeedback,
     Text,
-    Platform,
-    ModalProps
+    Platform
 } from 'react-native'
 const { OS } = Platform;
 
@@ -83,7 +82,7 @@ class Dialog extends Component {
 
     render() {
         const {
-            dialogStyle, visible, animationType, onRequestClose, onShow,
+            dialogStyle, visible, animationType, onRequestClose, onDismiss, onShow,
             onOrientationChange, onTouchOutside, overlayStyle, supportedOrientations
         } = this.props;
 
@@ -96,6 +95,7 @@ class Dialog extends Component {
                 transparent={true}
                 visible={visible}
                 onRequestClose={onRequestClose}
+                onDismiss={onDismiss}
                 onShow={onShow}
                 onOrientationChange={onOrientationChange}
                 supportedOrientations={supportedOrientations}
@@ -145,6 +145,7 @@ Dialog.propTypes = {
     visible: PropTypes.bool,
     animationType: PropTypes.string,
     onRequestClose: PropTypes.func,
+    onDismiss: PropTypes.func,
     onShow: PropTypes.func,
     onOrientationChange: PropTypes.func,
     onTouchOutside: PropTypes.func,
@@ -156,6 +157,7 @@ Dialog.propTypes = {
 Dialog.defaultProps = {
     visible: false,
     onRequestClose: () => null,
+    onDismiss: () => null,
     animationType: 'none'
 };
 

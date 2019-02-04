@@ -1,4 +1,12 @@
-import { ScrollView, StyleSheet, Text, TextInput, TouchableOpacity, View } from 'react-native';
+import { 
+    Alert, 
+    Platform,
+    ScrollView, 
+    Text, 
+    TextInput, 
+    TouchableOpacity, 
+    View 
+} from 'react-native';
 import React, { Component } from 'react';
 import BackButton from '../../atoms/BackButton';
 import ProfileHistoryItem from '../../atoms/ProfileHistoryItem';
@@ -31,8 +39,10 @@ class SendToken extends Component {
             wallet_address: '',
             loc_amount: '',
             wallet_password: '',
-            showProgress: false,
             jsonFile: '',
+            showProgress: false,
+            isAlert: false,
+            messageAlert: '',
             loadMessage: 'sending...',
         };
         this.onClickSend = this.onClickSend.bind(this);
@@ -73,49 +83,103 @@ class SendToken extends Component {
 
     onClickSend() { 
         this.setState({ showProgress: true });
-        setTimeout(() => {
-            const wei = (this.tokensToWei(this.state.loc_amount.toString()));
-            TokenTransactions.sendTokens(
-                this.state.jsonFile,
-                this.state.wallet_password,
-                this.state.wallet_address,
-                wei.toString()//(parseFloat(this.state.loc_amount) * Math.pow(10, 18)).toString()
-            ).then(() => {
+
+        const wei = (this.tokensToWei(this.state.loc_amount.toString()));
+        TokenTransactions.sendTokens(
+            this.state.jsonFile,
+            this.state.wallet_password,
+            this.state.wallet_address,
+            wei.toString()//(parseFloat(this.state.loc_amount) * Math.pow(10, 18)).toString()
+        ).then(() => {
+            if (Platform.OS === 'ios') {
                 this.setState({
                     wallet_address: '',
                     locAmount: 0,
                     wallet_password: '',
                     showProgress: false,
-                }, ()=> {
-                    setTimeout(() => {
-                        alert('Transaction made successfully');
-                    }, 1000)
+                    isAlert: true, 
+                    messageAlert:  'Transaction made successfully'
                 });
-            }).catch(x => {
-                this.setState({ showProgress: false }, () => {
-                    setTimeout(() => {
-                        if (x.hasOwnProperty('message')) {
-                            alert(x.message);
-                        } 
-                        else if (x.hasOwnProperty('err') && x.err.hasOwnProperty('message')) {
-                            alert(x.err.message);
-                        }
-                        else if (typeof x === 'string') {
-                            alert(x);
-                        } 
-                        else {
-                            console.log(x);
-                        }
-                    }, 1000)
+            }
+            else {
+                this.setState({
+                    wallet_address: '',
+                    locAmount: 0,
+                    wallet_password: '',
+                    showProgress: false,
+                }, () => {
+                    Alert.alert('Transaction made successfully');
                 });
-            });
-        }, 1000);
+            }
+        }).catch(x => {
+            if (x.hasOwnProperty('message')) {
+                if (Platform.OS === 'ios') {
+                    this.setState({
+                        showProgress: false,
+                        isAlert: true, 
+                        messageAlert:  x.message
+                    });
+                }
+                else {
+                    this.setState({
+                        showProgress: false
+                    }, () => {
+                        Alert.alert(x.message);
+                    });
+                }
+            } 
+            else if (x.hasOwnProperty('err') && x.err.hasOwnProperty('message')) {
+                if (Platform.OS === 'ios') {
+                    this.setState({
+                        showProgress: false,
+                        isAlert: true, 
+                        messageAlert:  x.err.message
+                    });
+                }
+                else {
+                    this.setState({
+                        showProgress: false
+                    }, () => {
+                        Alert.alert(x.err.message);
+                    });
+                }
+            }
+            else if (typeof x === 'string') {
+                if (Platform.OS === 'ios') {
+                    this.setState({
+                        showProgress: false,
+                        isAlert: true, 
+                        messageAlert:  x
+                    });
+                }
+                else {
+                    this.setState({
+                        showProgress: false
+                    }, () => {
+                        Alert.alert(x);
+                    });
+                }
+            } 
+            else {
+                this.setState({
+                    showProgress: false
+                });
+                console.log(x);
+            }
+        });
     }
 
     onChangeHandler = (property) => {
         return (value) => {
             this.setState({ [property]: value });
         };
+    }
+
+    onProgressClose = () => {
+        if (this.state.isAlert) {
+            Alert.alert(this.state.messageAlert);
+            this.setState({isAlert: false});
+        }
     }
 
     render() {
@@ -204,6 +268,7 @@ class SendToken extends Component {
                 </TouchableOpacity>
                 <ProgressDialog
                     visible={this.state.showProgress}
+                    onDismiss = {this.onProgressClose}
                     title=""
                     message={this.state.loadMessage}
                     animationType="fade"
