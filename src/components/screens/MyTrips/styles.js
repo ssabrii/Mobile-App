@@ -1,6 +1,6 @@
 import { StyleSheet } from 'react-native';
 
-const commonStyles = {
+export const commonStyles = {
     hotelImageCommon: {
         borderRadius: 10,
         height: 150

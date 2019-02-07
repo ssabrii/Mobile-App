@@ -177,17 +177,19 @@ class UserMyTrips extends Component {
     renderStatusText(status) {
         return (
             <Text style={styles.textBookingStatus}>
-                {`${lang.TEXT.MY_TRIPS_BOOKING_STATUS}: ${lang.SERVER.BOOKING_STATUS[status]}`}
+                {`${lang.TEXT.MY_TRIPS_BOOKING_STATUS}: ${status}`}
             </Text>
         );
     }
 
     renderBookingStatusAndRefNo(item) {
         const {refNo,status} = this.calcBookingStatusAndRefNo(item);
+        const statusValue = lang.SERVER.BOOKING_STATUS[status];
         let bookingStatusRendered, 
-            hasStatus = false, 
+            hasStatus = (statusValue != undefined), 
             hasRefNo = false;
             
+
         if (status == '' 
             || status == null 
             || status == 'PENDING_SAFECHARGE_CONFIRMATION') 
@@ -203,7 +205,7 @@ class UserMyTrips extends Component {
                     testID={'renderBookingStatus2'}
                     style={styles.hotelBookingStatusContainer}
                 >
-                    {this.renderStatusText(status)}
+                    {this.renderStatusText(statusValue)}
                     {this.renderRefNoText(refNo)}
                 </View>
             );
@@ -214,7 +216,7 @@ class UserMyTrips extends Component {
                     testID={'renderBookingStatus3'}
                     style={styles.hotelBookingStatusContainer}
                 >
-                    {this.renderStatusText(status)}
+                    {this.renderStatusText(statusValue)}
                 </View>
             );
         }
@@ -274,30 +276,30 @@ class UserMyTrips extends Component {
         style.push(extraStyle);
 
         return (
-            <View style={style}>
-                <View>
-                    <View style={styles.img_round}>
-                        <Text style={styles.img_round_text}>
-                          {dateInCircle}
-                        </Text>
+                <View style={style}>
+                    <View>
+                        <View style={styles.img_round}>
+                            <Text style={styles.img_round_text}>
+                            {dateInCircle}
+                            </Text>
+                        </View>
+                        <Dash dashColor='#dedede' dashStyle={{ borderRadius: 80, overflow: 'hidden' }} style={{ flex: 1, flexDirection: 'column', alignItems: 'center', justifyContent: 'flex-end' }} />
                     </View>
-                    <Dash dashColor='#dedede' dashStyle={{ borderRadius: 80, overflow: 'hidden' }} style={{ flex: 1, flexDirection: 'column', alignItems: 'center', justifyContent: 'flex-end' }} />
-                </View>
-                <View style={styles.flatListDataView}>
-                    <View ref={''} style={styles.flatListTitleView}>
-                        <Text style={styles.subtext1}>
-                            {dateFrom}{" "}{arrow}{" "}{dateTo}
-                        </Text>
-                        <Text style={styles.subtitle}>Check into {hotelName}</Text>
-                    </View>
-                    
-                    { this.renderHotelImage             (hotelImageURL) }
-                    { bookingStatusRendered                             }
+                    <View style={styles.flatListDataView}>
+                        <View ref={''} style={styles.flatListTitleView}>
+                            <Text style={styles.subtext1}>
+                                {dateFrom}{" "}{arrow}{" "}{dateTo}
+                            </Text>
+                            <Text style={styles.subtitle}>Check into {hotelName}</Text>
+                        </View>
+                        
+                        { this.renderHotelImage             (hotelImageURL) }
+                        { bookingStatusRendered                             }
 
-                    {/* disabled avatar */}
-                    { this.renderAvatar(false, imageAvatar) }
+                        {/* disabled avatar */}
+                        { this.renderAvatar(false, imageAvatar) }
+                    </View>
                 </View>
-            </View>
         )
     }
 

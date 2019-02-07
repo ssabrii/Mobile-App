@@ -1,14 +1,17 @@
 const SERVER = {
     BOOKING_STATUS: {
-        DONE: "COMPLETE",
-        CONFIRMED: "PENDING",
-        FAIL: "BOOKING FAILED",
-        FAILED: "BOOKING FAILED",
-        PENDING: "PENDING",
-        QUEUED: "PENDING",
-        QUEUED_FOR_CONFIRMATION: "PENDING",
-        CANCELLED: "CANCELLED",
-        PENDING_SAFECHARGE_CONFIRMATION: "PENDING"
+        DONE:                               "COMPLETE",
+        CONFIRMED:                          "PENDING",
+        FAIL:                               "BOOKING FAILED",
+        FAILED:                             "BOOKING FAILED",
+        PENDING:                            "PENDING",
+        // PENDING_CANCELLATION:               "PENDING",
+        QUEUED:                             "PENDING",
+        QUEUED_FOR_CONFIRMATION:            "PENDING",
+        QUEUED_FOR_CANCELLATION:            "PENDING",
+        CANCELLED:                          "CANCELLED",
+        // CANCELLATION_FAILED:                "CANCELLED",
+        PENDING_SAFECHARGE_CONFIRMATION:    "PENDING"
     }
 };
 
