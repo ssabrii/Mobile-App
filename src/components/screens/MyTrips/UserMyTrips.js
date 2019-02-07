@@ -13,7 +13,6 @@ import styles from './styles';
 import lang from '../../../language/';
 
 class UserMyTrips extends Component {
-
     static propTypes = {
         navigation: PropTypes.shape({
             navigate: PropTypes.func
@@ -40,6 +39,9 @@ class UserMyTrips extends Component {
         this.onEndReached = this.onEndReached.bind(this)
         this.renderItem = this.renderItem.bind(this)
         this.renderHotelImage = this.renderHotelImage.bind(this)
+        this.renderStatusText = this.renderStatusText.bind(this)
+        this.renderRefNoText = this.renderRefNoText.bind(this)
+        this.renderBookingStatusAndRefNo = this.renderBookingStatusAndRefNo.bind(this)
     }
 
     async componentDidMount() {
@@ -85,7 +87,9 @@ class UserMyTrips extends Component {
             try {
                 let photoJSONData = item.item.hotel_photo;
                 const thumb =  JSON.parse(photoJSONData).thumbnail;
-                hotelImageURL = `${imgHost}${thumb}`;
+                if (thumb.indexOf('not-available') == -1) {
+                    hotelImageURL = `${imgHost}${thumb}`;
+                }
                 if (this.state.image != '') {
                     imageAvatar = { uri: imgHost + this.state.userImageUrl }
                 }
@@ -147,44 +151,75 @@ class UserMyTrips extends Component {
         }
     }
 
+    renderAvatar(enabled,imageAvatar) {
+        if (enabled) {
+            return (
+                <View style={styles.flatListBottomView}>
+                    <View style={styles.flatListUserProfileView}>
+                        <Image style={styles.senderImage} source={imageAvatar} />
+                    </View>
+            </View>
+
+            )
+        } else {
+            return <View/>
+        }
+    }
+
+    renderRefNoText(refNo) {
+        return (
+            <Text style={styles.textBookingId}>
+                {`${lang.TEXT.MY_TRIPS_BOOKING_REF_NO}: ${refNo}`}
+            </Text>
+        )
+    }
+    
+    renderStatusText(status) {
+        return (
+            <Text style={styles.textBookingStatus}>
+                {`${lang.TEXT.MY_TRIPS_BOOKING_STATUS}: ${lang.SERVER.BOOKING_STATUS[status]}`}
+            </Text>
+        );
+    }
+
     renderBookingStatusAndRefNo(item) {
         const {refNo,status} = this.calcBookingStatusAndRefNo(item);
-
-        let txtStatus = <Text style={styles.textBookingStatus}>{`${lang.TEXT.MY_TRIPS_BOOKING_STATUS}: ${lang.SERVER.BOOKING_STATUS[status]}`}</Text>;
-        let txtRefNo = <Text style={styles.textBookingId}>{`${lang.TEXT.MY_TRIPS_BOOKING_REF_NO}: ${refNo}`}</Text>
-
-        let result;
-        
-        
-        if (status == '' || status == null || status == 'PENDING_SAFECHARGE_CONFIRMATION') {
-            // In this case no info should be shown
-            result = (
-                <View
-                    testID={'renderBookingStatus'}
-                    style={styles.hotelBookingStatusContainer}
-                ><Text>{'status null'}</Text></View>
+        let bookingStatusRendered, 
+            hasStatus = false, 
+            hasRefNo = false;
+            
+        if (status == '' 
+            || status == null 
+            || status == 'PENDING_SAFECHARGE_CONFIRMATION') 
+        {
+            bookingStatusRendered = (
+                <View testID={'renderBookingStatus1'} />
             );
         } else if (status && status == 'DONE') {
-            result = (
+            hasStatus = true;
+            hasRefNo = true;
+            bookingStatusRendered = (
                 <View 
-                    testID={'renderBookingStatus'}
+                    testID={'renderBookingStatus2'}
                     style={styles.hotelBookingStatusContainer}
                 >
-                    {txtStatus}
-                    {txtRefNo}
+                    {this.renderStatusText(status)}
+                    {this.renderRefNoText(refNo)}
                 </View>
             );
         } else {
-            result = (
+            hasStatus = true;
+            bookingStatusRendered = (
                 <View 
-                    testID={'renderBookingStatus'}
+                    testID={'renderBookingStatus3'}
                     style={styles.hotelBookingStatusContainer}
                 >
-                    {txtStatus}
+                    {this.renderStatusText(status)}
                 </View>
             );
         }
-        return result;
+
+        return {bookingStatusRendered, hasStatus, hasRefNo};
     }
 
     renderHotelImage(hotelImageURL) {
@@ -219,10 +254,27 @@ class UserMyTrips extends Component {
     }
     
     renderItem(item) {
+        let hotelName = item.item.hotel_name;
         const {hotelImageURL,imageAvatar,dateInCircle,dateFrom,dateTo,arrow} = this.calcItemData(item);
+        const {bookingStatusRendered, hasStatus, hasRefNo} = this.renderBookingStatusAndRefNo(item);
+        let style = [styles.flatListMainView];
+        let extraStyle = {};
+
+        if (hasStatus && hasRefNo) {
+            extraStyle = {height: 270};
+        } else if (hasStatus && !hasRefNo) {
+            extraStyle = {height: 250};
+        } else { // no status, no ref no
+            extraStyle = {height: 220};
+        }
+        
+        // fix for hotels with 2-line name
+        extraStyle.height += 30;
+        
+        style.push(extraStyle);
 
         return (
-            <View style={styles.flatListMainView}>
+            <View style={style}>
                 <View>
                     <View style={styles.img_round}>
                         <Text style={styles.img_round_text}>
@@ -232,28 +284,26 @@ class UserMyTrips extends Component {
                     <Dash dashColor='#dedede' dashStyle={{ borderRadius: 80, overflow: 'hidden' }} style={{ flex: 1, flexDirection: 'column', alignItems: 'center', justifyContent: 'flex-end' }} />
                 </View>
                 <View style={styles.flatListDataView}>
-                    <View style={styles.flatListTitleView}>
+                    <View ref={''} style={styles.flatListTitleView}>
                         <Text style={styles.subtext1}>
                             {dateFrom}{" "}{arrow}{" "}{dateTo}
                         </Text>
-                        <Text style={styles.subtitle}>Check into {item.item.hotel_name}</Text>
+                        <Text style={styles.subtitle}>Check into {hotelName}</Text>
                     </View>
                     
                     { this.renderHotelImage             (hotelImageURL) }
-                    { this.renderBookingStatusAndRefNo  (item)          }
+                    { bookingStatusRendered                             }
 
-                    <View style={styles.flatListBottomView}>
-                        <View style={styles.flatListUserProfileView}>
-                            <Image style={styles.senderImage} source={imageAvatar} />
-                        </View>
-                    </View>
-                    <View style={styles.itemSeparator}/>
+                    {/* disabled avatar */}
+                    { this.renderAvatar(false, imageAvatar) }
                 </View>
             </View>
         )
     }
 
     render() {
+        console.log('@@ render');
+        
         const { navigate } = this.props.navigation;        
 
         return (
