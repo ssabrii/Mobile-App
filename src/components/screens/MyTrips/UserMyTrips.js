@@ -154,17 +154,17 @@ class UserMyTrips extends Component {
         let txtRefNo = <Text style={styles.textBookingId}>{`${lang.TEXT.MY_TRIPS_BOOKING_REF_NO}: ${refNo}`}</Text>
 
         let result;
-
+        
         
         if (status == '' || status == null || status == 'PENDING_SAFECHARGE_CONFIRMATION') {
-        // In this case no info should be shown
+            // In this case no info should be shown
             result = (
                 <View
                     testID={'renderBookingStatus'}
                     style={styles.hotelBookingStatusContainer}
                 ><Text>{'status null'}</Text></View>
             );
-        } else if (status && status == 'COMPLETE') {
+        } else if (status && status == 'DONE') {
             result = (
                 <View 
                     testID={'renderBookingStatus'}
