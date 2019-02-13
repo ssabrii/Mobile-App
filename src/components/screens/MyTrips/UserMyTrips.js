@@ -11,6 +11,7 @@ import requester from '../../../initDependencies';
 import { userInstance } from '../../../utils/userInstance';
 import styles from './styles';
 import lang from '../../../language/';
+import SearchBar from "../../molecules/SearchBar"
 
 class UserMyTrips extends Component {
     static propTypes = {
@@ -30,18 +31,25 @@ class UserMyTrips extends Component {
         console.log(props.navigation.state);
         //State
         this.state = {
-            trips: props.navigation.state.params.trips.content,
+            trips: props.navigation.state.params.trips.content.concat(), // make a copy
             isLast: props.navigation.state.params.trips.last,
             page: 0,
             userImageUrl: '',
             isLoading: false,
+            allTrips: props.navigation.state.params.trips.content.concat() // make a copy
         };
-        this.onEndReached = this.onEndReached.bind(this)
-        this.renderItem = this.renderItem.bind(this)
-        this.renderHotelImage = this.renderHotelImage.bind(this)
-        this.renderStatusText = this.renderStatusText.bind(this)
-        this.renderRefNoText = this.renderRefNoText.bind(this)
-        this.renderBookingStatusAndRefNo = this.renderBookingStatusAndRefNo.bind(this)
+        this.onEndReached = this.onEndReached.bind(this);
+        this.renderItem = this.renderItem.bind(this);
+        this.renderHotelImage = this.renderHotelImage.bind(this);
+        this.renderStatusText = this.renderStatusText.bind(this);
+        this.renderRefNoText = this.renderRefNoText.bind(this);
+        this.renderBookingStatusAndRefNo = this.renderBookingStatusAndRefNo.bind(this);
+        this.onSearchHandler = this.onSearchHandler.bind(this);
+        this.onFilterTrips = this.onFilterTrips.bind(this);
+        this.filterTrips = this.filterTrips.bind(this);
+        this.clearFilterDelay = this.clearFilterDelay.bind(this);
+
+        this.filterDelay = -1;
     }
 
     async componentDidMount() {
@@ -52,8 +60,63 @@ class UserMyTrips extends Component {
         });
     }
 
+    clearFilterDelay() {
+        if (this.filterDelay != -1) {
+            clearTimeout(this.filterDelay);
+            this.filterDelay = -1;
+        }
+    }
+    
+    filterTrips(value) {
+        if (value.length <= 2) {
+            this.setState({ trips: this.state.allTrips.concat()});
+        } else {
+            let tmpTrips = this.state.allTrips.concat()
+            tmpTrips = tmpTrips.filter(
+                (item) => {
+                    const hotelName = (item.hotel_name.toLowerCase().indexOf(value.toLowerCase()) > -1);
+                    const bookingId = (
+                        item.booking_id
+                        && item.booking_id.toString().indexOf(value.toLowerCase()) > -1
+                    );
+                    const status = (
+                        item.status
+                        && lang.SERVER.BOOKING_STATUS[item.status]
+                        && lang.SERVER.BOOKING_STATUS[item.status]
+                            .toString()
+                            .indexOf(value.toUpperCase()) > -1
+                    );
+
+                    return (
+                        hotelName || bookingId || status
+                    )
+                }
+            );
+
+            this.setState({ trips: tmpTrips});
+            this.clearFilterDelay();
+        }
+    }
+    onFilterTrips(event) {
+        const value = this.refs.searchBar.input._lastNativeText;
+        this.clearFilterDelay();
+        this.filterTrips(value);
+    }
+
+    onSearchHandler(value) {
+        this.clearFilterDelay();
+        const func = this.filterTrips;
+        this.filterDelay = setTimeout(
+            function(value) {
+                func(value)  
+            },
+            200, 
+            value
+        );
+            
+    }
+
     onEndReached() {
-        console.log('reached to end');
         let pageNumber = this.state.page + 1;
         if (!this.state.isLast && !this.state.isLoading) {
             this.setState({ isLoading: true })
@@ -61,14 +124,14 @@ class UserMyTrips extends Component {
                 res.body.then(data => {
                     var tmpTrips = []
                     tmpTrips = this.state.trips.concat(data.content)
-                    tmpTrips = _.orderBy(tmpTrips, ['arrival_date'], ['desc']);
+                    // disable front-end ordering
+                    // tmpTrips = _.orderBy(tmpTrips, ['arrival_date'], ['desc']);
                     this.setState({
                         trips: tmpTrips,
                         isLast: data.last,
                         page: pageNumber,
                         isLoading: false,
                     })
-
                 }).catch(err => {
                     console.log(err);
                 });
@@ -87,9 +150,14 @@ class UserMyTrips extends Component {
             try {
                 let photoJSONData = item.item.hotel_photo;
                 const thumb =  JSON.parse(photoJSONData).thumbnail;
+
+                // Filter out images with known pattern of non-available image
+                // Display them as blank image placeholder.
+                // (the component with testID={'blankImageContainer'} in this.renderHotelImage())
                 if (thumb.indexOf('not-available') == -1) {
                     hotelImageURL = `${imgHost}${thumb}`;
                 }
+
                 if (this.state.image != '') {
                     imageAvatar = { uri: imgHost + this.state.userImageUrl }
                 }
@@ -113,7 +181,7 @@ class UserMyTrips extends Component {
             console.warn('Error in hotel item data',{error,hotelData:item})
         }
 
-        const arrivalDate = moment(item.item.arrival_date);
+        const arrivalDate = moment(item.item.arrival_date).utc();
         const day = arrivalDate.format("DD").toString();
         const month = arrivalDate.format("MMM").toString();
         const dateInCircle = `${day}\n${month}`;
@@ -304,14 +372,26 @@ class UserMyTrips extends Component {
     }
 
     render() {
-        console.log('@@ render');
-        
         const { navigate } = this.props.navigation;        
 
         return (
             <View style={styles.container}>
                 <View style={styles.chatToolbar}>
-                    <Text style={styles.title}>Your Trips</Text>
+                    <Text style={styles.title}>My Trips</Text>
+                </View>
+                <View style={styles.searchAndPickWrapView}>
+                    <View style={styles.seachView}>
+                        <SearchBar
+                            ref={'searchBar'}
+                            autoCorrect={false}
+                            value={this.state.search}
+                            onChangeText={this.onSearchHandler}
+                            placeholder="Filter by name, ref.no. or status"
+                            placeholderTextColor="#bdbdbd"
+                            leftIcon="search"
+                            onLeftPress={this.onFilterTrips}
+                        />
+                    </View>
                 </View>
 
                 <FlatList
