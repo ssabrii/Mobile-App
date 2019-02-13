@@ -57,6 +57,15 @@ const styles = StyleSheet.create({
         marginTop: 10,
         marginBottom: 10
     },
+    searchAndPickWrapView:{
+        width: '100%',
+        marginTop: 20,
+        marginBottom:10
+    },
+    searchView: {
+        paddingHorizontal: 15,
+        backgroundColor: '#f0f1f3',
+    },
 
     // texsts
     txtHotelNoImage: {
@@ -166,7 +175,6 @@ const styles = StyleSheet.create({
     },
     chatToolbar: {
         alignSelf: 'flex-start',
-        marginBottom: 30
     },
     imageViewWrapper: {
         position: 'relative',
