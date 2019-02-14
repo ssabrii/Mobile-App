@@ -414,7 +414,7 @@ class UserMyTrips extends Component {
                             autoCorrect={false}
                             value={this.state.search}
                             onChangeText={this.onFilterChanged}
-                            placeholder="Filter by name, ref.no. or status"
+                            placeholder={lang.TEXT.MYTRIPS_FILTER}
                             placeholderTextColor="#bdbdbd"
                             leftIcon="search"
                             onLeftPress={this.onFilterTrips}

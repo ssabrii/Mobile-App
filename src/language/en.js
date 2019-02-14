@@ -18,7 +18,8 @@ const SERVER = {
 const TEXT = {
     MY_TRIPS_BOOKING_STATUS: 'Status',
     MY_TRIPS_BOOKING_REF_NO: 'Reference no',
-    MYTRIPS_NO_IMAGE: 'No image'
+    MYTRIPS_NO_IMAGE: 'No image',
+    MYTRIPS_FILTER: "Filter trips"
 }
 
 
