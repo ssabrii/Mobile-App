@@ -11,9 +11,9 @@ import requester from '../../../initDependencies';
 import { userInstance } from '../../../utils/userInstance';
 import styles from './styles';
 import lang from '../../../language/';
+import SearchBar from "../../molecules/SearchBar"
 
 class UserMyTrips extends Component {
-
     static propTypes = {
         navigation: PropTypes.shape({
             navigate: PropTypes.func
@@ -31,15 +31,27 @@ class UserMyTrips extends Component {
         console.log(props.navigation.state);
         //State
         this.state = {
-            trips: props.navigation.state.params.trips.content,
+            trips: props.navigation.state.params.trips.content.concat(), // make a copy
             isLast: props.navigation.state.params.trips.last,
             page: 0,
             userImageUrl: '',
             isLoading: false,
+            allTrips: props.navigation.state.params.trips.content.concat() // make a copy
         };
-        this.onEndReached = this.onEndReached.bind(this)
-        this.renderItem = this.renderItem.bind(this)
-        this.renderHotelImage = this.renderHotelImage.bind(this)
+        this.renderItem = this.renderItem.bind(this);
+        this.renderHotelImage = this.renderHotelImage.bind(this);
+        this.renderStatusText = this.renderStatusText.bind(this);
+        this.renderRefNoText = this.renderRefNoText.bind(this);
+        this.renderBookingStatusAndRefNo = this.renderBookingStatusAndRefNo.bind(this);
+        this.onServerNextPageLoaded = this.onServerNextPageLoaded.bind(this);
+        this.refreshFilterResult = this.refreshFilterResult.bind(this);
+        this.filterTrips = this.filterTrips.bind(this);
+        this.clearFilterDelay = this.clearFilterDelay.bind(this);
+        this.onEndReached = this.onEndReached.bind(this);
+        this.onFilterChanged = this.onFilterChanged.bind(this);
+        this.onFilterTrips = this.onFilterTrips.bind(this);
+
+        this.filterDelay = -1;
     }
 
     async componentDidMount() {
@@ -50,26 +62,107 @@ class UserMyTrips extends Component {
         });
     }
 
+    clearFilterDelay() {
+        if (this.filterDelay != -1) {
+            clearTimeout(this.filterDelay);
+            this.filterDelay = -1;
+        }
+    }
+    
+    refreshFilterResult() {
+        const value = this.refs.searchBar.input._lastNativeText;
+        this.clearFilterDelay();
+        this.filterTrips(value);
+    }
+
+    filterTrips(value) {
+        const filterValueLower = value.toLowerCase();
+        const filterValueUpper = value.toUpperCase();
+        if (filterValueLower.length <= 1) {
+            this.setState({ trips: this.state.allTrips.concat()});
+        } else {
+            let tmpTrips = this.state.allTrips.concat()
+            tmpTrips = tmpTrips.filter(
+                (item) => {
+                    const hotelName = (item.hotel_name.toLowerCase().indexOf(filterValueLower) > -1);
+                    const bookingId = (
+                        item.booking_id
+                        && item.booking_id.toString().indexOf(filterValueLower) > -1
+                    );
+                    const status = (
+                        item.status
+                        && lang.SERVER.BOOKING_STATUS[item.status]
+                        && lang.SERVER.BOOKING_STATUS[item.status]
+                            .toString()
+                            .indexOf(filterValueUpper) > -1
+                    );
+
+                    const tmpDate = moment(item.arrival_date).utc();
+                    let arrivalDate = false;
+                    const tmpDateFilters = [
+                        tmpDate.format('DD MMM').toLowerCase(),   // [2-digit day] [3-letter month] (space in between)
+                        tmpDate.format('MMMM').toLowerCase(),     // month full name
+                        tmpDate.format('MM-YYYY'),                // [2-digit month]-[4-digit year]
+                        tmpDate.format('YYYY-MM'),                // [4-digit year]-[2-digit month]
+                        tmpDate.year()                            // year
+                    ];
+                    for (item of tmpDateFilters) {
+                        if (item.toString().indexOf(filterValueLower) > -1) {
+                            arrivalDate = true;
+                            break;
+                        }
+                    }
+
+                    return (
+                        hotelName || bookingId || status || arrivalDate
+                    );
+                }
+            );
+
+            this.setState({ trips: tmpTrips});
+            this.clearFilterDelay();
+        }
+    }
+
+    onFilterTrips(event) {
+        this.refreshFilterResult();
+    }
+
+    onServerNextPageLoaded(data) {
+        var allTrips = []
+        allTrips = this.state.allTrips.concat(data.content)
+
+        this.setState({
+            allTrips: allTrips,
+            isLast: data.last,
+            page: pageNumber,
+            isLoading: false,
+        });
+    }
+    
+    onFilterChanged(value) {
+        this.clearFilterDelay();
+        const func = this.filterTrips;
+        this.filterDelay = setTimeout(
+            function(value) {
+                func(value)  
+            },
+            200, 
+            value
+        );
+            
+    }
+
     onEndReached() {
-        console.log('reached to end');
         let pageNumber = this.state.page + 1;
         if (!this.state.isLast && !this.state.isLoading) {
             this.setState({ isLoading: true })
             requester.getMyHotelBookings([`page=${pageNumber}`]).then(res => {
-                res.body.then(data => {
-                    var tmpTrips = []
-                    tmpTrips = this.state.trips.concat(data.content)
-                    tmpTrips = _.orderBy(tmpTrips, ['arrival_date'], ['desc']);
-                    this.setState({
-                        trips: tmpTrips,
-                        isLast: data.last,
-                        page: pageNumber,
-                        isLoading: false,
-                    })
-
-                }).catch(err => {
-                    console.log(err);
-                });
+                res.body
+                    .then(this.onServerNextPageLoaded)
+                    .catch(err => {
+                        console.log(err);
+                    });
             });
         }
     }
@@ -85,7 +178,14 @@ class UserMyTrips extends Component {
             try {
                 let photoJSONData = item.item.hotel_photo;
                 const thumb =  JSON.parse(photoJSONData).thumbnail;
-                hotelImageURL = `${imgHost}${thumb}`;
+
+                // Filter out images with known pattern of non-available image
+                // Display them as blank image placeholder.
+                // (the component with testID={'blankImageContainer'} in this.renderHotelImage())
+                if (thumb.indexOf('not-available') == -1) {
+                    hotelImageURL = `${imgHost}${thumb}`;
+                }
+
                 if (this.state.image != '') {
                     imageAvatar = { uri: imgHost + this.state.userImageUrl }
                 }
@@ -109,7 +209,7 @@ class UserMyTrips extends Component {
             console.warn('Error in hotel item data',{error,hotelData:item})
         }
 
-        const arrivalDate = moment(item.item.arrival_date);
+        const arrivalDate = moment(item.item.arrival_date).utc();
         const day = arrivalDate.format("DD").toString();
         const month = arrivalDate.format("MMM").toString();
         const dateInCircle = `${day}\n${month}`;
@@ -147,44 +247,77 @@ class UserMyTrips extends Component {
         }
     }
 
+    renderAvatar(enabled,imageAvatar) {
+        if (enabled) {
+            return (
+                <View style={styles.flatListBottomView}>
+                    <View style={styles.flatListUserProfileView}>
+                        <Image style={styles.senderImage} source={imageAvatar} />
+                    </View>
+            </View>
+
+            )
+        } else {
+            return <View/>
+        }
+    }
+
+    renderRefNoText(refNo) {
+        return (
+            <Text style={styles.textBookingId}>
+                {`${lang.TEXT.MY_TRIPS_BOOKING_REF_NO}: ${refNo}`}
+            </Text>
+        )
+    }
+    
+    renderStatusText(status) {
+        return (
+            <Text style={styles.textBookingStatus}>
+                {`${lang.TEXT.MY_TRIPS_BOOKING_STATUS}: ${status}`}
+            </Text>
+        );
+    }
+
     renderBookingStatusAndRefNo(item) {
         const {refNo,status} = this.calcBookingStatusAndRefNo(item);
+        const statusValue = lang.SERVER.BOOKING_STATUS[status];
+        let bookingStatusRendered, 
+            hasStatus = (statusValue != undefined), 
+            hasRefNo = false;
+            
 
-        let txtStatus = <Text style={styles.textBookingStatus}>{`${lang.TEXT.MY_TRIPS_BOOKING_STATUS}: ${lang.SERVER.BOOKING_STATUS[status]}`}</Text>;
-        let txtRefNo = <Text style={styles.textBookingId}>{`${lang.TEXT.MY_TRIPS_BOOKING_REF_NO}: ${refNo}`}</Text>
-
-        let result;
-
-        
-        if (status == '' || status == null || status == 'PENDING_SAFECHARGE_CONFIRMATION') {
-        // In this case no info should be shown
-            result = (
-                <View
-                    testID={'renderBookingStatus'}
-                    style={styles.hotelBookingStatusContainer}
-                ><Text>{'status null'}</Text></View>
+        if (status == '' 
+            || status == null 
+            || status == 'PENDING_SAFECHARGE_CONFIRMATION') 
+        {
+            bookingStatusRendered = (
+                <View testID={'renderBookingStatus1'} />
             );
-        } else if (status && status == 'COMPLETE') {
-            result = (
+        } else if (status && status == 'DONE') {
+            hasStatus = true;
+            hasRefNo = true;
+            bookingStatusRendered = (
                 <View 
-                    testID={'renderBookingStatus'}
+                    testID={'renderBookingStatus2'}
                     style={styles.hotelBookingStatusContainer}
                 >
-                    {txtStatus}
-                    {txtRefNo}
+                    {this.renderStatusText(statusValue)}
+                    {this.renderRefNoText(refNo)}
                 </View>
             );
         } else {
-            result = (
+            hasStatus = true;
+            bookingStatusRendered = (
                 <View 
-                    testID={'renderBookingStatus'}
+                    testID={'renderBookingStatus3'}
                     style={styles.hotelBookingStatusContainer}
                 >
-                    {txtStatus}
+                    {this.renderStatusText(statusValue)}
                 </View>
             );
         }
-        return result;
+
+        return {bookingStatusRendered, hasStatus, hasRefNo};
     }
 
     renderHotelImage(hotelImageURL) {
@@ -219,37 +352,50 @@ class UserMyTrips extends Component {
     }
     
     renderItem(item) {
+        let hotelName = item.item.hotel_name;
         const {hotelImageURL,imageAvatar,dateInCircle,dateFrom,dateTo,arrow} = this.calcItemData(item);
+        const {bookingStatusRendered, hasStatus, hasRefNo} = this.renderBookingStatusAndRefNo(item);
+        let style = [styles.flatListMainView];
+        let extraStyle = {};
+
+        if (hasStatus && hasRefNo) {
+            extraStyle = {height: 270};
+        } else if (hasStatus && !hasRefNo) {
+            extraStyle = {height: 250};
+        } else { // no status, no ref no
+            extraStyle = {height: 220};
+        }
+        
+        // fix for hotels with 2-line name
+        extraStyle.height += 30;
+        
+        style.push(extraStyle);
 
         return (
-            <View style={styles.flatListMainView}>
-                <View>
-                    <View style={styles.img_round}>
-                        <Text style={styles.img_round_text}>
-                          {dateInCircle}
-                        </Text>
-                    </View>
-                    <Dash dashColor='#dedede' dashStyle={{ borderRadius: 80, overflow: 'hidden' }} style={{ flex: 1, flexDirection: 'column', alignItems: 'center', justifyContent: 'flex-end' }} />
-                </View>
-                <View style={styles.flatListDataView}>
-                    <View style={styles.flatListTitleView}>
-                        <Text style={styles.subtext1}>
-                            {dateFrom}{" "}{arrow}{" "}{dateTo}
-                        </Text>
-                        <Text style={styles.subtitle}>Check into {item.item.hotel_name}</Text>
-                    </View>
-                    
-                    { this.renderHotelImage             (hotelImageURL) }
-                    { this.renderBookingStatusAndRefNo  (item)          }
-
-                    <View style={styles.flatListBottomView}>
-                        <View style={styles.flatListUserProfileView}>
-                            <Image style={styles.senderImage} source={imageAvatar} />
+                <View style={style}>
+                    <View>
+                        <View style={styles.img_round}>
+                            <Text style={styles.img_round_text}>
+                            {dateInCircle}
+                            </Text>
                         </View>
+                        <Dash dashColor='#dedede' dashStyle={{ borderRadius: 80, overflow: 'hidden' }} style={{ flex: 1, flexDirection: 'column', alignItems: 'center', justifyContent: 'flex-end' }} />
                     </View>
-                    <View style={styles.itemSeparator}/>
+                    <View style={styles.flatListDataView}>
+                        <View ref={''} style={styles.flatListTitleView}>
+                            <Text style={styles.subtext1}>
+                                {dateFrom}{" "}{arrow}{" "}{dateTo}
+                            </Text>
+                            <Text style={styles.subtitle}>Check into {hotelName}</Text>
+                        </View>
+                        
+                        { this.renderHotelImage             (hotelImageURL) }
+                        { bookingStatusRendered                             }
+
+                        {/* disabled avatar */}
+                        { this.renderAvatar(false, imageAvatar) }
+                    </View>
                 </View>
-            </View>
         )
     }
 
@@ -259,7 +405,21 @@ class UserMyTrips extends Component {
         return (
             <View style={styles.container}>
                 <View style={styles.chatToolbar}>
-                    <Text style={styles.title}>Your Trips</Text>
+                    <Text style={styles.title}>My Trips</Text>
+                </View>
+                <View style={styles.searchAndPickWrapView}>
+                    <View style={styles.seachView}>
+                        <SearchBar
+                            ref={'searchBar'}
+                            autoCorrect={false}
+                            value={this.state.search}
+                            onChangeText={this.onFilterChanged}
+                            placeholder={lang.TEXT.MYTRIPS_FILTER}
+                            placeholderTextColor="#bdbdbd"
+                            leftIcon="search"
+                            onLeftPress={this.onFilterTrips}
+                        />
+                    </View>
                 </View>
 
                 <FlatList
