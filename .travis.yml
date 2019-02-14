@@ -12,6 +12,7 @@ jobs:
         - 8.14.1
       env: app_ios=MobileApp.app_$TRAVIS_JOB_NUMBER.zip
       before_install:
+      	- ls -l
         - openssl aes-256-cbc -K $encrypted_acf840ecd253_key -iv $encrypted_acf840ecd253_iv -in deploy_key.enc -out deploy_key -d
         - "./scripts/versions.sh"
       install:
