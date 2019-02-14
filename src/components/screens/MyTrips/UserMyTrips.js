@@ -38,16 +38,18 @@ class UserMyTrips extends Component {
             isLoading: false,
             allTrips: props.navigation.state.params.trips.content.concat() // make a copy
         };
-        this.onEndReached = this.onEndReached.bind(this);
         this.renderItem = this.renderItem.bind(this);
         this.renderHotelImage = this.renderHotelImage.bind(this);
         this.renderStatusText = this.renderStatusText.bind(this);
         this.renderRefNoText = this.renderRefNoText.bind(this);
         this.renderBookingStatusAndRefNo = this.renderBookingStatusAndRefNo.bind(this);
-        this.onSearchHandler = this.onSearchHandler.bind(this);
-        this.onFilterTrips = this.onFilterTrips.bind(this);
+        this.onServerNextPageLoaded = this.onServerNextPageLoaded.bind(this);
+        this.refreshFilterResult = this.refreshFilterResult.bind(this);
         this.filterTrips = this.filterTrips.bind(this);
         this.clearFilterDelay = this.clearFilterDelay.bind(this);
+        this.onEndReached = this.onEndReached.bind(this);
+        this.onFilterChanged = this.onFilterChanged.bind(this);
+        this.onFilterTrips = this.onFilterTrips.bind(this);
 
         this.filterDelay = -1;
     }
@@ -67,29 +69,53 @@ class UserMyTrips extends Component {
         }
     }
     
+    refreshFilterResult() {
+        const value = this.refs.searchBar.input._lastNativeText;
+        this.clearFilterDelay();
+        this.filterTrips(value);
+    }
+
     filterTrips(value) {
-        if (value.length <= 2) {
+        const filterValueLower = value.toLowerCase();
+        const filterValueUpper = value.toUpperCase();
+        if (filterValueLower.length <= 1) {
             this.setState({ trips: this.state.allTrips.concat()});
         } else {
             let tmpTrips = this.state.allTrips.concat()
             tmpTrips = tmpTrips.filter(
                 (item) => {
-                    const hotelName = (item.hotel_name.toLowerCase().indexOf(value.toLowerCase()) > -1);
+                    const hotelName = (item.hotel_name.toLowerCase().indexOf(filterValueLower) > -1);
                     const bookingId = (
                         item.booking_id
-                        && item.booking_id.toString().indexOf(value.toLowerCase()) > -1
+                        && item.booking_id.toString().indexOf(filterValueLower) > -1
                     );
                     const status = (
                         item.status
                         && lang.SERVER.BOOKING_STATUS[item.status]
                         && lang.SERVER.BOOKING_STATUS[item.status]
                             .toString()
-                            .indexOf(value.toUpperCase()) > -1
+                            .indexOf(filterValueUpper) > -1
                     );
 
+                    const tmpDate = moment(item.arrival_date).utc();
+                    let arrivalDate = false;
+                    const tmpDateFilters = [
+                        tmpDate.format('DD MMM').toLowerCase(),   // [2-digit day] [3-letter month] (space in between)
+                        tmpDate.format('MMMM').toLowerCase(),     // month full name
+                        tmpDate.format('MM-YYYY'),                // [2-digit month]-[4-digit year]
+                        tmpDate.format('YYYY-MM'),                // [4-digit year]-[2-digit month]
+                        tmpDate.year()                            // year
+                    ];
+                    for (item of tmpDateFilters) {
+                        if (item.toString().indexOf(filterValueLower) > -1) {
+                            arrivalDate = true;
+                            break;
+                        }
+                    }
+
                     return (
-                        hotelName || bookingId || status
-                    )
+                        hotelName || bookingId || status || arrivalDate
+                    );
                 }
             );
 
@@ -97,13 +123,24 @@ class UserMyTrips extends Component {
             this.clearFilterDelay();
         }
     }
+
     onFilterTrips(event) {
-        const value = this.refs.searchBar.input._lastNativeText;
-        this.clearFilterDelay();
-        this.filterTrips(value);
+        this.refreshFilterResult();
     }
 
-    onSearchHandler(value) {
+    onServerNextPageLoaded(data) {
+        var allTrips = []
+        allTrips = this.state.allTrips.concat(data.content)
+
+        this.setState({
+            allTrips: allTrips,
+            isLast: data.last,
+            page: pageNumber,
+            isLoading: false,
+        });
+    }
+    
+    onFilterChanged(value) {
         this.clearFilterDelay();
         const func = this.filterTrips;
         this.filterDelay = setTimeout(
@@ -121,20 +158,11 @@ class UserMyTrips extends Component {
         if (!this.state.isLast && !this.state.isLoading) {
             this.setState({ isLoading: true })
             requester.getMyHotelBookings([`page=${pageNumber}`]).then(res => {
-                res.body.then(data => {
-                    var tmpTrips = []
-                    tmpTrips = this.state.trips.concat(data.content)
-                    // disable front-end ordering
-                    // tmpTrips = _.orderBy(tmpTrips, ['arrival_date'], ['desc']);
-                    this.setState({
-                        trips: tmpTrips,
-                        isLast: data.last,
-                        page: pageNumber,
-                        isLoading: false,
-                    })
-                }).catch(err => {
-                    console.log(err);
-                });
+                res.body
+                    .then(this.onServerNextPageLoaded)
+                    .catch(err => {
+                        console.log(err);
+                    });
             });
         }
     }
@@ -385,7 +413,7 @@ class UserMyTrips extends Component {
                             ref={'searchBar'}
                             autoCorrect={false}
                             value={this.state.search}
-                            onChangeText={this.onSearchHandler}
+                            onChangeText={this.onFilterChanged}
                             placeholder="Filter by name, ref.no. or status"
                             placeholderTextColor="#bdbdbd"
                             leftIcon="search"
