@@ -2,11 +2,11 @@ os: osx
 osx_image: xcode9.4
 
 stages:
-  - Build iOS
+  - build ios
 
 jobs:
   include:
-    - stage: Build iOS
+    - stage: build ios
       language: node_js
       node_js:
         - 8.14.1
@@ -32,11 +32,12 @@ jobs:
             -sdk iphonesimulator \
             -derivedDataPath ios/build \
             -quiet
-      after_script:
-        - find ios/build/ -type d -maxdepth 5 | grep MobileApp.app
+      after_success:
         - zip -qr $app_ios $var1
         - ls -lh *zip
         - scp -o "StrictHostKeyChecking no" $app_ios "$var_799cfba7:$var3/$TRAVIS_JOB_NUMBER"
+      after_script:
+        - find ios/build/ -type d -maxdepth 5 | grep MobileApp.app
 
     - stage: android
       language: java
