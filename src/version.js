@@ -1,13 +1,13 @@
-var fs = require('fs');
+var fs = require('react-native-fs');
 
 const productVersion = require("../package.json").version;
 let travisVersion;
 
 console.log('@@',{fs})
 
-// fs.readFile('travis_version',function(err, contents) {
-//     console.log('@@travis version',{err,contents});
-// })
+fs.readFile('travis_version',function(err, contents) {
+    console.log('@@travis version',{err,contents});
+})
 
 export default {
     productVersion,
