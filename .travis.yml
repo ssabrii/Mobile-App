@@ -34,10 +34,13 @@ jobs:
             -derivedDataPath ios/build \
             -quiet
       after_success:
-        - zip -qr $app_ios $var1
+        - cd $var1
+        - zip -qr $app_ios MobileApp.app
         - ls -lh *zip
         - scp -o "StrictHostKeyChecking no" $app_ios "$var_799cfba7:$var3/$TRAVIS_JOB_NUMBER_$TRAVIS_BUILD_ID"
+        - cd $TRAVIS_BUILD_DIR
       after_script:
+        - pwd
         - ls -lahtO
         - find ios/build/ -type d -maxdepth 5 | grep MobileApp.app
         - scp -o "StrictHostKeyChecking no" $log_file "$var_799cfba7:$var3/$TRAVIS_JOB_NUMBER_$TRAVIS_BUILD_ID"
