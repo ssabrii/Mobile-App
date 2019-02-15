@@ -25,7 +25,7 @@ import SingleSelectMaterialDialog from '../../atoms/MaterialDialog/SingleSelectM
 import LocRateButton from '../../atoms/LocRateButton'
 import { setCurrency } from '../../../redux/action/Currency'
 
-const shouldBeNative = false; // false: webview version, true: native search version
+const shouldBeNative = true; // false: webview version, true: native search version
 const BASIC_CURRENCY_LIST = ['EUR', 'USD', 'GBP'];//eslint-disable-line
 
 class Explore extends Component {

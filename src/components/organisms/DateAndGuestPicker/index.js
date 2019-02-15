@@ -3,7 +3,8 @@ import { Text, TouchableOpacity, View, Image } from 'react-native';
 import PropTypes from 'prop-types';
 import styles from './styles';
 import { withNavigation } from 'react-navigation';
-import Icon from 'react-native-vector-icons/SimpleLineIcons';
+// TODO: fix this font - simple-line-icons
+// import Icon from 'react-native-vector-icons/SimpleLineIcons';
 
 
 class DateAndGuestPicker extends Component {
@@ -80,7 +81,8 @@ class DateAndGuestPicker extends Component {
                                     disabled={disabled}
                                     onPress={this.onSettings}>
                                     <View style={styles.optionsPickerViewIncomplete}>
-                                        <Icon name={"settings"} size={28} color={disabled?'#d9d9d9':"#565656"}/>
+                                        {/* // TODO: fix this font simple-line-icons */}
+                                        {/* <Icon name={"settings"} size={28} color={disabled?'#d9d9d9':"#565656"}/> */}
                                     </View>
                                 </TouchableOpacity>
                             )

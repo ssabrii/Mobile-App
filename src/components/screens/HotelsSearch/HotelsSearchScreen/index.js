@@ -4,7 +4,7 @@ import { Text, ScrollView, TouchableOpacity, View, Platform, NativeModules, Devi
 
 import FontAwesome, { Icons } from 'react-native-fontawesome';
 
-import { imgHost } from '../../../../config';
+import { imgHost, socketHost } from '../../../../config';
 import SearchBar from '../../../molecules/SearchBar';
 import DateAndGuestPicker from '../../../organisms/DateAndGuestPicker';
 import requester from '../../../../initDependencies';
@@ -856,13 +856,13 @@ class HotelsSearchScreen extends Component {
 
     stompIos() {
         countIos = 0;
-        clientRef = stomp.client('wss://beta.locktrip.com/socket');
+        clientRef = stomp.client(socketHost);
         clientRef.connect({}, (frame) => {
             var headers = {'content-length': false};
             clientRef.subscribe(`search/${this.uuid}`, this.handleReceiveSingleHotel);
             clientRef.send("search",
                 headers,
-                JSON.stringify({uuid: this.uuid, query : searchString})
+                JSON.stringify({uuid: this.uuid, query : this.searchString})
             )
         }, (error) => {
             clientRef.disconnect();
@@ -873,9 +873,9 @@ class HotelsSearchScreen extends Component {
     }
     
     handleReceiveSingleHotel(message) {
-        if (countIos === 0) {
-            this.applyFilters(false);
-        }
+        // if (countIos === 0) {
+        //     this.applyFilters(false);
+        // }
         countIos = 1;
         const response = JSON.parse(message.body);
         if (response.hasOwnProperty('allElements')) {
