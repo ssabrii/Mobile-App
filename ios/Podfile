@@ -39,7 +39,6 @@ target 'MobileApp' do
   pod 'Google-Maps-iOS-Utils' # Remove this line if you don't want to support GoogleMaps on iOS
 
   pod 'react-native-image-resizer', :path => '../node_modules/react-native-image-resizer'
-  pod 'RNFS', :path => '../node_modules/react-native-fs'
 
 
 end

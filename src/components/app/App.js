@@ -3,12 +3,10 @@ import { StatusBar, View } from 'react-native';
 import { Provider } from 'react-redux';
 import store from '../../redux/store';
 import { AppNavigator } from '../../routing';
-import version from "../../version"
 
 class App extends Component {
     componentDidMount() {
         console.disableYellowBox = true;
-        console.log(`@@Version: `,{version});
         
     }
     render() {
