@@ -218,8 +218,6 @@ dependencies {
         exclude group: "com.android.support"
     }
     implementation project(':react-native-vector-icons')
-
-    compile project(':react-native-fs')
 }
 
 // Run this once to be able to run the application with BUCK

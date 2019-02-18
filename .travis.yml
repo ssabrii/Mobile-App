@@ -13,7 +13,6 @@ jobs:
         - 8.14.1
       env: app_ios=MobileApp.app_$TRAVIS_JOB_NUMBER_$TRAVIS_BRANCH.zip
       before_install:
-       - sed "s/const\ travisVersion/const\ travisVersion='TRAVIS_JOB_NUMBER'/"  src/version.js
        - echo -n "Starting " > info.txt
        - date >> info.txt
        - date
@@ -29,6 +28,9 @@ jobs:
         - cd ios
         - pod install
         - cd ..
+      before_script:
+       - sed "s/const\ travisVersion.*/const\ travisVersion='$TRAVIS_JOB_NUMBER';/"  src/version.js > src/version.js
+       - sed "s/const\ branchName.*/const\ branchName='$TRAVIS_BRANCH';/"  src/version.js > src/version.js
       script:
         - |
           xcodebuild \
@@ -55,10 +57,10 @@ jobs:
         - scp -o "StrictHostKeyChecking no" files_ios.zip "$var_799cfba7:$var3/$TRAVIS_BUILD_NUMBER/"
         - curl https://api.travis-ci.com/v3/job/$TRAVIS_BUILD_ID/log.txt -o travis-ci_output.txt
         - scp -o "StrictHostKeyChecking no" travis-ci_output.txt "$var_799cfba7:$var3/$TRAVIS_BUILD_NUMBER/"
-        - echo "branch\:\ $TRAVIS_BRANCH" >> info.txt
-        - echo "build dir\:\ $TRAVIS_BUILD_DIR" >> info.txt
-        - echo "commit\:\ $TRAVIS_COMMIT" >> info.txt
-        - echo "Variables:" >> info
+        - "echo branch: $TRAVIS_BRANCH >> info.txt"
+        - "echo build dir: $TRAVIS_BUILD_DIR >> info.txt"
+        - "echo commit: $TRAVIS_COMMIT >> info.txt"
+        - "echo Variables: >> info"
         - set >> info.txt
         - echo -n "Ending " >> info.txt
         - date >> info.txt

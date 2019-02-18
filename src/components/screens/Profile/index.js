@@ -9,6 +9,7 @@ import Toast from 'react-native-easy-toast'
 import { Wallet } from '../../../services/blockchain/wallet';
 import { userInstance } from '../../../utils/userInstance';
 import SingleSelectMaterialDialog from '../../atoms/MaterialDialog/SingleSelectMaterialDialog'
+import VersionText from '../../atoms/VersionText'
 import ProfileWalletCard from  '../../atoms/ProfileWalletCard'
 import { setCurrency } from '../../../redux/action/Currency'
 import styles from './styles';
@@ -205,7 +206,13 @@ class Profile extends Component {
                             <Text style={styles.navItemText}>Log Out</Text>
                         </TouchableOpacity>
                     </View>
+
                 </ScrollView>
+
+                <VersionText color={'#646467'} size={10} 
+                    style={{position: 'absolute', backgroundColor: '#f0f1f3', bottom: 0}}
+                    textStyle={{textAlign: 'right', bottom: 2}}
+                />
 
                 <SingleSelectMaterialDialog
                     title = { 'Select Currency' }
