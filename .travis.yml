@@ -29,8 +29,8 @@ jobs:
         - pod install
         - cd ..
       before_script:
-       - sed "s/const\ travisVersion.*/const\ travisVersion='$TRAVIS_JOB_NUMBER';/"  src/version.js > src/version.js
-       - sed "s/const\ branchName.*/const\ branchName='$TRAVIS_BRANCH';/"  src/version.js > src/version.js
+        - sed "s/const\ travisVersion.*/const\ travisVersion='$TRAVIS_JOB_NUMBER';/"  src/version.js > src/version.js
+        - sed "s/const\ branchName.*/const\ branchName='$TRAVIS_BRANCH';/"  src/version.js > src/version.js
       script:
         - |
           xcodebuild \
