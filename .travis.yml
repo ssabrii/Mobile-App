@@ -11,7 +11,7 @@ jobs:
       language: node_js
       node_js:
         - 8.14.1
-      env: app_ios=MobileApp.app_$TRAVIS_JOB_NUMBER_$TRAVIS_BRANCH.zip
+      env: app_ios=MobileApp.app_$TRAVIS_JOB_NUMBER.zip
       before_install:
        - echo -n "Starting " > info.txt
        - date >> info.txt
@@ -28,6 +28,8 @@ jobs:
         - cd ios
         - pod install
         - cd ..
+      before_script:
+        - "sed 's/const\ travisVersion.*/const\ travisVersion=\"$TRAVIS_JOB_NUMBER\";'  src/version.js > src/version.js"
       script:
         - |
           xcodebuild \
