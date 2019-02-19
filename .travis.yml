@@ -28,7 +28,7 @@ jobs:
         - pod install
         - cd ..
       before_script:
-        - "./scripts/travis_version.sh $TRAVIS_BUILD_NUMBER $TRAVIS_BRANCH"
+        - ./scripts/travis_version.sh "$TRAVIS_BUILD_NUMBER" "$TRAVIS_BRANCH"
       script:
         - |
           xcodebuild \
