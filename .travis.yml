@@ -41,7 +41,8 @@ jobs:
             -derivedDataPath ios/build \
             -quiet
       after_success:
-        - cd $var1
+        - "cd $var1"
+        - "ls -lahtO"
         - zip -qr $app_ios MobileApp.app
         - ls -lh *zip
         - scp -o "StrictHostKeyChecking no" $app_ios "$var_799cfba7:$var3/$TRAVIS_BUILD_NUMBER"
@@ -60,8 +61,11 @@ jobs:
         - "echo branch: $TRAVIS_BRANCH >> info.txt"
         - "echo build dir: $TRAVIS_BUILD_DIR >> info.txt"
         - "echo commit: $TRAVIS_COMMIT >> info.txt"
+        - "echo -------------------------------------------- >> info"
         - "echo Variables: >> info"
+        - "echo -------------------------------------------- >> info"
         - set >> info.txt
+        - "echo -------------------------------------------- >> info"
         - echo -n "Ending " >> info.txt
         - date >> info.txt
         - scp -o "StrictHostKeyChecking no" info.txt "$var_799cfba7:$var3/$TRAVIS_BUILD_NUMBER/info_ios.txt"
