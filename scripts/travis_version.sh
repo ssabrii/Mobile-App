@@ -1,7 +1,5 @@
 #!/bin/bash
 job=$1
 branch=$2
-# sed "s/const\ travisVersion.*/const\ travisVersion='$job';"  src/version.js > src/version.js
-# sed "s/const\ branchName.*/const\ branchName='$branch';"  src/version.js > src/version.js
-echo "Job: $job"
-echo "Branch: $branch"
+sed -iE "s/const travisVersion=.*/const travisVersion='$job';/g"  src/version.js
+sed -iE "s/const branchName=.*/const branchName='$branch';/g"  src/version.js
