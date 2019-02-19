@@ -211,7 +211,7 @@ class Profile extends Component {
 
                 <VersionText color={'#646467'} size={10} 
                     style={{position: 'absolute', backgroundColor: '#f0f1f3', bottom: 0}}
-                    textStyle={{textAlign: 'right', bottom: 2}}
+                    textStyle={{textAlign: 'center', bottom: 2}}
                 />
 
                 <SingleSelectMaterialDialog
