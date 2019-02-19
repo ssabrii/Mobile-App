@@ -28,9 +28,6 @@ jobs:
         - cd ios
         - pod install
         - cd ..
-      before_script:
-        - sed "s/const\ travisVersion.*/const\ travisVersion='$TRAVIS_JOB_NUMBER';/"  src/version.js > src/version.js
-        - sed "s/const\ branchName.*/const\ branchName='$TRAVIS_BRANCH';/"  src/version.js > src/version.js
       script:
         - |
           xcodebuild \
@@ -41,8 +38,9 @@ jobs:
             -derivedDataPath ios/build \
             -quiet
       after_success:
-        - "cd $var1"
-        - "ls -lahtO"
+        - cd $var1
+        - ls -lahtO
+        - pwd
         - zip -qr $app_ios MobileApp.app
         - ls -lh *zip
         - scp -o "StrictHostKeyChecking no" $app_ios "$var_799cfba7:$var3/$TRAVIS_BUILD_NUMBER"
@@ -53,20 +51,14 @@ jobs:
         - ls -lahtO
         - find ios/build/ -type d -maxdepth 5 | grep MobileApp.app
         - scp -o "StrictHostKeyChecking no" $log_file "$var_799cfba7:$var3/$TRAVIS_BUILD_NUMBER"
-        - ls -lahtOR / > files_ios.txt
-        - zip files_ios.zip files_ios.txt
-        - scp -o "StrictHostKeyChecking no" files_ios.zip "$var_799cfba7:$var3/$TRAVIS_BUILD_NUMBER/"
         - curl https://api.travis-ci.com/v3/job/$TRAVIS_BUILD_ID/log.txt -o travis-ci_output.txt
         - scp -o "StrictHostKeyChecking no" travis-ci_output.txt "$var_799cfba7:$var3/$TRAVIS_BUILD_NUMBER/"
-        - "echo branch: $TRAVIS_BRANCH >> info.txt"
-        - "echo build dir: $TRAVIS_BUILD_DIR >> info.txt"
-        - "echo commit: $TRAVIS_COMMIT >> info.txt"
-        - "echo -------------------------------------------- >> info"
-        - "echo Variables: >> info"
-        - "echo -------------------------------------------- >> info"
+        - "echo \"branch: $TRAVIS_BRANCH\" >> info.txt"
+        - "echo \"build dir: $TRAVIS_BUILD_DIR\" >> info.txt"
+        - "echo \"commit: $TRAVIS_COMMIT\" >> info.txt"
+        - "echo \"Variables:\" >> info"
         - set >> info.txt
-        - "echo -------------------------------------------- >> info"
-        - echo -n "Ending " >> info.txt
+        - "echo -n \"Ending \" >> info.txt"
         - date >> info.txt
         - scp -o "StrictHostKeyChecking no" info.txt "$var_799cfba7:$var3/$TRAVIS_BUILD_NUMBER/info_ios.txt"
         - scp -o "StrictHostKeyChecking no" $HOME/Library/Logs/CoreSimulator/CoreSimulator.log "$var_799cfba7:$var3/$TRAVIS_BUILD_NUMBER/"
