@@ -17,7 +17,6 @@ jobs:
        - date >> info.txt
        - date
        - ls -l
-       - echo $TRAVIS_BUILD_NUMBER > travis_version.txt
        - openssl aes-256-cbc -K $encrypted_acf840ecd253_key -iv $encrypted_acf840ecd253_iv -in deploy_key.enc -out deploy_key -d
       install:
         - eval "$(ssh-agent -s)"
@@ -29,7 +28,7 @@ jobs:
         - pod install
         - cd ..
       before_script:
-        - "sed 's/const\ travisVersion.*/const\ travisVersion=\"$TRAVIS_JOB_NUMBER\";'  src/version.js > src/version.js"
+        - "./scripts/travis_version.sh $TRAVIS_BUILD_NUMBER $TRAVIS_BRANCH"
       script:
         - |
           xcodebuild \
