@@ -1,6 +1,6 @@
 
 const productVersion = require("../package.json").version;
-const exploreIsNative = true;   // false: webview version, true: native search version
+const exploreIsNative = false;  // false: webview version, true: native search version
 const travisVersion='';         // this line is updated by .travis.yml, with sed command
 const branchName='';            // this line is updated by .travis.yml, with sed command
 
