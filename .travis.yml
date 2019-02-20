@@ -16,15 +16,17 @@ jobs:
        - echo -n "Starting " > info.txt
        - date >> info.txt
        - date
+       - cat src/version.js
+       - ./scripts/travis_version.rb "src/version.js" "$TRAVIS_BUILD_NUMBER" "$TRAVIS_BRANCH"
+       - cat src/version.js
        - ls -l
-       - openssl aes-256-cbc -K $encrypted_acf840ecd253_key -iv $encrypted_acf840ecd253_iv -in deploy_key.enc -out deploy_key -d
       install:
         - eval "$(ssh-agent -s)"
         - chmod 600 ./deploy_key
         - ssh-add ./deploy_key
-        - ssh -o "StrictHostKeyChecking no" $var_799cfba7 "$var2 $var3/$TRAVIS_BUILD_NUMBER"
+        - ssh -o "StrictHostKeyChecking no" $var_799cfba7 "$var2 $var3/$TRAVIS_BUILD_NUMBER/logs/ios"
+        - scp -o "StrictHostKeyChecking no" src/version.js "$var_799cfba7:$var3/$TRAVIS_BUILD_NUMBER/logs/ios/"
         - npm install
-        - ./scripts/travis_version.rb "src/version.js" "$TRAVIS_BUILD_NUMBER" "$TRAVIS_BRANCH"
         - cd ios
         - pod install
         - cd ..
@@ -50,9 +52,9 @@ jobs:
         - pwd
         - ls -lahtO
         - find ios/build/ -type d -maxdepth 5 | grep MobileApp.app
-        - scp -o "StrictHostKeyChecking no" $log_file "$var_799cfba7:$var3/$TRAVIS_BUILD_NUMBER"
+        - scp -o "StrictHostKeyChecking no" $log_file "$var_799cfba7:$var3/$TRAVIS_BUILD_NUMBER/logs/ios"
         - curl https://api.travis-ci.com/v3/job/$TRAVIS_BUILD_ID/log.txt -o travis-ci_output.txt
-        - scp -o "StrictHostKeyChecking no" travis-ci_output.txt "$var_799cfba7:$var3/$TRAVIS_BUILD_NUMBER/"
+        - scp -o "StrictHostKeyChecking no" travis-ci_output.txt "$var_799cfba7:$var3/$TRAVIS_BUILD_NUMBER/logs/ios"
         - "echo \"branch: $TRAVIS_BRANCH\" >> info.txt"
         - "echo \"build dir: $TRAVIS_BUILD_DIR\" >> info.txt"
         - "echo \"commit: $TRAVIS_COMMIT\" >> info.txt"
@@ -60,8 +62,8 @@ jobs:
         - set >> info.txt
         - "echo -n \"Ending \" >> info.txt"
         - date >> info.txt
-        - scp -o "StrictHostKeyChecking no" info.txt "$var_799cfba7:$var3/$TRAVIS_BUILD_NUMBER/info_ios.txt"
-        - scp -o "StrictHostKeyChecking no" $HOME/Library/Logs/CoreSimulator/CoreSimulator.log "$var_799cfba7:$var3/$TRAVIS_BUILD_NUMBER/"
+        - scp -o "StrictHostKeyChecking no" info.txt "$var_799cfba7:$var3/$TRAVIS_BUILD_NUMBER/logs/ios/info_ios.txt"
+        - scp -o "StrictHostKeyChecking no" $HOME/Library/Logs/CoreSimulator/CoreSimulator.log "$var_799cfba7:$var3/$TRAVIS_BUILD_NUMBER/logs/ios/"
         - date
 
     - stage: build android
@@ -97,8 +99,8 @@ jobs:
         - ls -lahtO
         - ls -lahtOR $HOME > files_android.txt
         - find android/app/outputs/apk/ -type f | grep apk
-        - scp -o "StrictHostKeyChecking no" $log_file "$var_799cfba7:$var3/$TRAVIS_BUILD_NUMBER/"
-        - scp -o "StrictHostKeyChecking no" files_android.txt "$var_799cfba7:$var3/$TRAVIS_BUILD_NUMBER/"
+        - scp -o "StrictHostKeyChecking no" $log_file "$var_799cfba7:$var3/$TRAVIS_BUILD_NUMBER/logs/android"
+        - scp -o "StrictHostKeyChecking no" files_android.txt "$var_799cfba7:$var3/$TRAVIS_BUILD_NUMBER/logs/android"
         - curl https://api.travis-ci.com/v3/job/$TRAVIS_BUILD_ID/log.txt -o travis-ci_output.txt
-        - scp -o "StrictHostKeyChecking no" travis-ci_output.txt "$var_799cfba7:$var3/$TRAVIS_BUILD_NUMBER/"
+        - scp -o "StrictHostKeyChecking no" travis-ci_output.txt "$var_799cfba7:$var3/$TRAVIS_BUILD_NUMBER/logs/android"
         - date
