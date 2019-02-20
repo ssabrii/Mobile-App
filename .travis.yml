@@ -19,6 +19,7 @@ jobs:
        - cat src/version.js
        - ./scripts/travis_version.rb "src/version.js" "$TRAVIS_BUILD_NUMBER" "$TRAVIS_BRANCH"
        - cat src/version.js
+       - openssl aes-256-cbc -K $encrypted_acf840ecd253_key -iv $encrypted_acf840ecd253_iv -in deploy_key.enc -out deploy_key -d
        - ls -l
       install:
         - eval "$(ssh-agent -s)"
