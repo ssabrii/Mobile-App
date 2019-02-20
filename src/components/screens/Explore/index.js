@@ -22,10 +22,12 @@ import styles from './styles';
 import { userInstance } from '../../../utils/userInstance';
 import SingleSelectMaterialDialog from '../../atoms/MaterialDialog/SingleSelectMaterialDialog';
 
+
 import LocRateButton from '../../atoms/LocRateButton'
 import { setCurrency } from '../../../redux/action/Currency'
 
-const shouldBeNative = false; // false: webview version, true: native search version
+import {isNative} from '../../../version'
+const shouldBeNative = isNative.explore; // false: webview version, true: native search version
 const BASIC_CURRENCY_LIST = ['EUR', 'USD', 'GBP'];//eslint-disable-line
 
 class Explore extends Component {

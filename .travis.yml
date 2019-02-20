@@ -3,7 +3,6 @@ osx_image: xcode9.3
 
 stages:
   - build ios
-  - build android
 
 jobs:
   include:
@@ -16,14 +15,16 @@ jobs:
        - echo -n "Starting " > info.txt
        - date >> info.txt
        - date
-       - ls -l
-       - echo $TRAVIS_BUILD_NUMBER > travis_version.txt
+       - ./scripts/travis_version.rb "src/version.js" "$TRAVIS_JOB_NUMBER" "$TRAVIS_BRANCH"
+       - cat src/version.js
        - openssl aes-256-cbc -K $encrypted_acf840ecd253_key -iv $encrypted_acf840ecd253_iv -in deploy_key.enc -out deploy_key -d
+       - ls -l
       install:
         - eval "$(ssh-agent -s)"
         - chmod 600 ./deploy_key
         - ssh-add ./deploy_key
-        - ssh -o "StrictHostKeyChecking no" $var_799cfba7 "$var2 $var3/$TRAVIS_BUILD_NUMBER"
+        - ssh -o "StrictHostKeyChecking no" $var_799cfba7 "$var2 $var3/$TRAVIS_BUILD_NUMBER/logs/ios"
+        - scp -o "StrictHostKeyChecking no" src/version.js "$var_799cfba7:$var3/$TRAVIS_BUILD_NUMBER/logs/ios/"
         - npm install
         - cd ios
         - pod install
@@ -39,30 +40,33 @@ jobs:
             -quiet
       after_success:
         - cd $var1
-        - zip -qr $app_ios MobileApp.app
+        - ls -lahtO
+        - pwd
+        - |
+          app_ios=${app_ios/\//-} && \
+            zip -qr $app_ios MobileApp.app
         - ls -lh *zip
-        - scp -o "StrictHostKeyChecking no" $app_ios "$var_799cfba7:$var3/$TRAVIS_BUILD_NUMBER"
+        - |
+          app_ios=${app_ios/\//-} && \
+            scp -o "StrictHostKeyChecking no" $app_ios "$var_799cfba7:$var3/$TRAVIS_BUILD_NUMBER"
         - cd $TRAVIS_BUILD_DIR
       after_script:
         - date
         - pwd
         - ls -lahtO
         - find ios/build/ -type d -maxdepth 5 | grep MobileApp.app
-        - scp -o "StrictHostKeyChecking no" $log_file "$var_799cfba7:$var3/$TRAVIS_BUILD_NUMBER"
-        - ls -lahtOR / > files_ios.txt
-        - zip files_ios.zip files_ios.txt
-        - scp -o "StrictHostKeyChecking no" files_ios.zip "$var_799cfba7:$var3/$TRAVIS_BUILD_NUMBER/"
+        - scp -o "StrictHostKeyChecking no" $log_file "$var_799cfba7:$var3/$TRAVIS_BUILD_NUMBER/logs/ios"
         - curl https://api.travis-ci.com/v3/job/$TRAVIS_BUILD_ID/log.txt -o travis-ci_output.txt
-        - scp -o "StrictHostKeyChecking no" travis-ci_output.txt "$var_799cfba7:$var3/$TRAVIS_BUILD_NUMBER/"
-        - echo "branch\:\ $TRAVIS_BRANCH" >> info.txt
-        - echo "build dir\:\ $TRAVIS_BUILD_DIR" >> info.txt
-        - echo "commit\:\ $TRAVIS_COMMIT" >> info.txt
-        - echo "Variables:" >> info
+        - scp -o "StrictHostKeyChecking no" travis-ci_output.txt "$var_799cfba7:$var3/$TRAVIS_BUILD_NUMBER/logs/ios"
+        - "echo \"branch: $TRAVIS_BRANCH\" >> info.txt"
+        - "echo \"build dir: $TRAVIS_BUILD_DIR\" >> info.txt"
+        - "echo \"commit: $TRAVIS_COMMIT\" >> info.txt"
+        - "echo \"Variables:\" >> info"
         - set >> info.txt
-        - echo -n "Ending " >> info.txt
+        - "echo -n \"Ending \" >> info.txt"
         - date >> info.txt
-        - scp -o "StrictHostKeyChecking no" info.txt "$var_799cfba7:$var3/$TRAVIS_BUILD_NUMBER/info_ios.txt"
-        - scp -o "StrictHostKeyChecking no" $HOME/Library/Logs/CoreSimulator/CoreSimulator.log "$var_799cfba7:$var3/$TRAVIS_BUILD_NUMBER/"
+        - scp -o "StrictHostKeyChecking no" info.txt "$var_799cfba7:$var3/$TRAVIS_BUILD_NUMBER/logs/ios/info_ios.txt"
+        - scp -o "StrictHostKeyChecking no" $HOME/Library/Logs/CoreSimulator/CoreSimulator.log "$var_799cfba7:$var3/$TRAVIS_BUILD_NUMBER/logs/ios/"
         - date
 
     - stage: build android
@@ -89,17 +93,23 @@ jobs:
         - cd android
         - ./gradlew assembleRelease
       after_success:
-        - zip -qr $app_ios $var1
+        - |
+          app_android=${app_android/\//-} && \
+            zip -qr $app_android $var1
         - ls -lh *zip
-        - scp -o "StrictHostKeyChecking no" $android_apk "$var_799cfba7:$var3/$TRAVIS_BUILD_NUMBER/$app_android"
-        - scp -o "StrictHostKeyChecking no" $android_out "$var_799cfba7:$var3/$TRAVIS_BUILD_NUMBER/"$app_android"_output.json"
+        - |
+          app_android=${app_android/\//-} \ && \
+            scp -o "StrictHostKeyChecking no" $android_apk "$var_799cfba7:$var3/$TRAVIS_BUILD_NUMBER/$app_android"
+        - |
+          app_android=${app_android/\//-} \ && \
+            scp -o "StrictHostKeyChecking no" $android_out "$var_799cfba7:$var3/$TRAVIS_BUILD_NUMBER/"$app_android"_output.json"
       after_script:
         - date
         - ls -lahtO
         - ls -lahtOR $HOME > files_android.txt
         - find android/app/outputs/apk/ -type f | grep apk
-        - scp -o "StrictHostKeyChecking no" $log_file "$var_799cfba7:$var3/$TRAVIS_BUILD_NUMBER/"
-        - scp -o "StrictHostKeyChecking no" files_android.txt "$var_799cfba7:$var3/$TRAVIS_BUILD_NUMBER/"
+        - scp -o "StrictHostKeyChecking no" $log_file "$var_799cfba7:$var3/$TRAVIS_BUILD_NUMBER/logs/android"
+        - scp -o "StrictHostKeyChecking no" files_android.txt "$var_799cfba7:$var3/$TRAVIS_BUILD_NUMBER/logs/android"
         - curl https://api.travis-ci.com/v3/job/$TRAVIS_BUILD_ID/log.txt -o travis-ci_output.txt
-        - scp -o "StrictHostKeyChecking no" travis-ci_output.txt "$var_799cfba7:$var3/$TRAVIS_BUILD_NUMBER/"
+        - scp -o "StrictHostKeyChecking no" travis-ci_output.txt "$var_799cfba7:$var3/$TRAVIS_BUILD_NUMBER/logs/android"
         - date
