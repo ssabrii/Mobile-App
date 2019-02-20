@@ -9,10 +9,13 @@ end
 
 # execute
 file_name   = ARGV[0];
-job_id      = ARGV[1];
+build_id    = ARGV[1];
 branch_name = ARGV[2];
 
+puts("Reading file #{file_name}")
 # job number -> travisVersion
-replace_line_in_file(file_name, /const travisVersion.*/, "const travisVersion='#{job_id}';'")
+puts("travisVersion = #{build_id}")
+replace_line_in_file(file_name, /const travisVersion.*/, "const travisVersion='#{build_id}';")
 # branch -> branchName
-replace_line_in_file(file_name, /const branchName.*/, "const branchName='#{branch_name}';'")
+puts("branchName = #{branch_name}")
+replace_line_in_file(file_name, /const branchName.*/, "const branchName='#{branch_name}';")
