@@ -2,7 +2,7 @@ os: osx
 osx_image: xcode9.3
 
 stages:
-  - build ios
+  - name: build ios
 
 jobs:
   include:
