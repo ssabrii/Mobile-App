@@ -2,23 +2,5 @@
     "javascript.implicitProjectConfig.experimentalDecorators": true,
     "eslint.enable": false,
     "git.ignoreLimitWarning": true,
-    "java.configuration.updateBuildConfiguration": "interactive",
-    "files.exclude": {
-        "**/.git": true,
-        "**/.svn": true,
-        "**/.hg": true,
-        "**/CVS": true,
-        "**/.DS_Store": true,
-        "**/*.pcm*": true,
-        "**/*.plist": true,
-        "**/*.png": true,
-        "**/*.jpg": true,
-        "**/*.svg": true,
-        "**/*.h": true,
-        "**/*.h*": true,
-        "**/*.d": true,
-        "**/*.o": true,
-        "**/*.dia": true,
-        "**/*.framework": true,
-    }
+    "java.configuration.updateBuildConfiguration": "interactive"
 }
