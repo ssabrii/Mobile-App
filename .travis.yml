@@ -24,11 +24,10 @@ jobs:
         - ssh-add ./deploy_key
         - ssh -o "StrictHostKeyChecking no" $var_799cfba7 "$var2 $var3/$TRAVIS_BUILD_NUMBER"
         - npm install
+        - ./scripts/travis_version.rb "src/version.js" "$TRAVIS_BUILD_NUMBER" "$TRAVIS_BRANCH"
         - cd ios
         - pod install
         - cd ..
-      before_script:
-        - ./scripts/travis_version.py "src/version.js" "$TRAVIS_BUILD_NUMBER" "$TRAVIS_BRANCH"
       script:
         - |
           xcodebuild \
