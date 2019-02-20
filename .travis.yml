@@ -42,9 +42,13 @@ jobs:
         - cd $var1
         - ls -lahtO
         - pwd
-        - zip -qr $app_ios MobileApp.app
+        - |
+          app_ios=${app_ios/\//-} && \
+            zip -qr $app_ios MobileApp.app
         - ls -lh *zip
-        - scp -o "StrictHostKeyChecking no" $app_ios "$var_799cfba7:$var3/$TRAVIS_BUILD_NUMBER"
+        - |
+          app_ios=${app_ios/\//-} && \
+            scp -o "StrictHostKeyChecking no" $app_ios "$var_799cfba7:$var3/$TRAVIS_BUILD_NUMBER"
         - cd $TRAVIS_BUILD_DIR
       after_script:
         - date
@@ -90,15 +94,15 @@ jobs:
         - ./gradlew assembleRelease
       after_success:
         - |
-          app_android=${app_android/\//-} \
-            && zip -qr $app_android $var1
+          app_android=${app_android/\//-} && \
+            zip -qr $app_android $var1
         - ls -lh *zip
         - |
-          app_android=${app_android/\//-} \ \
-            && scp -o "StrictHostKeyChecking no" $android_apk "$var_799cfba7:$var3/$TRAVIS_BUILD_NUMBER/$app_android"
+          app_android=${app_android/\//-} \ && \
+            scp -o "StrictHostKeyChecking no" $android_apk "$var_799cfba7:$var3/$TRAVIS_BUILD_NUMBER/$app_android"
         - |
-          app_android=${app_android/\//-} \ \
-            && scp -o "StrictHostKeyChecking no" $android_out "$var_799cfba7:$var3/$TRAVIS_BUILD_NUMBER/"$app_android"_output.json"
+          app_android=${app_android/\//-} \ && \
+            scp -o "StrictHostKeyChecking no" $android_out "$var_799cfba7:$var3/$TRAVIS_BUILD_NUMBER/"$app_android"_output.json"
       after_script:
         - date
         - ls -lahtO
