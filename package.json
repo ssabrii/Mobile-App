@@ -1,6 +1,6 @@
 {
   "name": "Mobile-App",
-  "version": "0.1.0",
+  "version": "1.0.22",
   "private": true,
   "devDependencies": {
     "babel-eslint": "^8.2.3",

@@ -10,7 +10,10 @@ export let Config;
 export let xDeviceVersion;
 export let ROOMS_XML_CURRENCY;//const ROOMS_XML_CURRENCY = 'EUR';
 
-const IS_STAGING = false; 
+import version from "./version"
+console.log('@@',{version})
+
+const IS_STAGING = true;
 
 if (IS_STAGING) {
     apiHost = 'https://staging.locktrip.com/api/';//'http://192.168.203.165:8080/';

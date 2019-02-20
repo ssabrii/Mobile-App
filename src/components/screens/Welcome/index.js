@@ -17,6 +17,7 @@ import { domainPrefix, basePath } from '../../../config';
 import requester from '../../../initDependencies';
 import styles from './styles';
 import LoginLocationDialog from '../../atoms/LoginLocationDialog'
+import VersionText from '../../atoms/VersionText'
 
 import SplashScreen from 'react-native-smart-splash-screen';
 const FBSDK = require('react-native-fbsdk');
@@ -289,6 +290,11 @@ class Welcome extends Component {
                 </Text>
 
                 <GetStartedImage />
+
+                <VersionText color={'white'} size={10} 
+                    style={{bottom: "11%", position: 'absolute'}} 
+                    textStyle={{marginHorizontal: 30}}
+                />
 
                 <LoginLocationDialog
                     countries = { this.props.countries }

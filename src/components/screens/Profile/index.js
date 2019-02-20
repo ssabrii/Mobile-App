@@ -205,6 +205,7 @@ class Profile extends Component {
                             <Text style={styles.navItemText}>Log Out</Text>
                         </TouchableOpacity>
                     </View>
+
                 </ScrollView>
 
                 <SingleSelectMaterialDialog
