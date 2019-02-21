@@ -19,7 +19,7 @@ if (IS_STAGING) {
     apiHost = 'https://staging.locktrip.com/api/';//'http://192.168.203.165:8080/';
     imgHost = 'https://static.locktrip.com/';
     basePath = 'https://staging.locktrip.com/';//'http://192.168.203.165:3000/';
-    socketHostPrice="wss://locktripexchanger.herokuapp.com/websocket";
+    socketHostPrice="wss://exchanger-stage.locktrip.com/websocket";
     socketHost = 'wss://staging.locktrip.com/socket';
     xDeviceVersion = "49365f68-42e1-11e8-842f-0ed5f89f718b";
     routerPrefix = '.';
