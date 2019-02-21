@@ -76,7 +76,7 @@ class LocRateButton extends Component {
         
         const fiat = exchangeRates.currencyExchangeRates && CurrencyConverter.convert(exchangeRates.currencyExchangeRates, DEFAULT_CRYPTO_CURRENCY, currency, exchangeRates.locRateFiatAmount);
         let locAmount = locAmounts.locAmounts[exchangeRates.locRateFiatAmount] && locAmounts.locAmounts[exchangeRates.locRateFiatAmount].locAmount;
-        if (!locAmount) {
+        if (exchangeRates.locEurRate) {
             locAmount = exchangeRates.locRateFiatAmount / exchangeRates.locEurRate;
         }
         let locRate = fiat / locAmount;

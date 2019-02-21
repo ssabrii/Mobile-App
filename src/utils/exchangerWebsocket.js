@@ -1,4 +1,4 @@
-import { socketHostPrice } from '../config';
+import { socketHostPrice, socketHost } from '../config';
 import {
     setLocPriceWebsocketConnection
 } from '../redux/action/exchangerSocket';
@@ -6,17 +6,22 @@ import {
     updateLocAmounts,
     clearLocAmounts
 } from '../redux/action/locAmounts'
+import {setLocEurRate} from '../redux/action/exchangeRates'
 import {
     setSeconds
 } from '../redux/action/locPriceUpdateTimer'
 import store from '../redux/store';
-const WEBSOCKET_RECONNECT_DELAY = 5000;
+import Stomp from 'stompjs';
 
+
+const WEBSOCKET_RECONNECT_DELAY = 5000;
 const DEFAULT_SOCKET_METHOD = 'getLocPrice';
 const UNSUBSCRIBE_SOCKET_METHOD = 'unsubscribe';
 
 class WS {
     static self;
+    static stompJSClient;
+
     constructor() {
         WS.self = this;
         this.ws = null;
@@ -33,7 +38,28 @@ class WS {
         this.ws.onclose = () => { 
             this.close(this); 
         };
+
+        this.connectStompJSLockRate();        
     }
+
+    connectStompJSLockRate() {
+        const topic = "/topic/loc_rate";
+        let client = Stomp.client(socketHost);
+        WS.stompJSClient = client;
+
+        const onSubscribe = () => client.subscribe(
+            topic, 
+            (data) => {
+                store.dispatch(setLocEurRate(Number(data.body)));
+            }
+        );
+    
+        client.connect(
+          null,
+          null,
+          onSubscribe
+        );
+      }
 
     startGrouping(scehduleTime = 20 * 1000){
         console.log("LOC PRICE startGrouping")
@@ -123,6 +149,11 @@ class WS {
         this.shoudSocketReconnect = false;
         if (this.ws) {
             this.ws.close();
+        }
+
+        if (WS.stompJSClient) {
+            WS.stompJSClient.disconnect();
+            WS.stompJSClient = null;
         }
     }
 }
