@@ -12,11 +12,17 @@ import {
 } from '../redux/action/locPriceUpdateTimer'
 import store from '../redux/store';
 import Stomp from 'stompjs';
+import {
+    Platform, NativeModules, DeviceEventEmitter
+} from 'react-native'
 
 
 const WEBSOCKET_RECONNECT_DELAY = 5000;
 const DEFAULT_SOCKET_METHOD = 'getLocPrice';
 const UNSUBSCRIBE_SOCKET_METHOD = 'unsubscribe';
+const topic = "/topic/loc_rate";
+
+const androidStomp = NativeModules.StompModule;
 
 class WS {
     static self;
@@ -50,7 +56,6 @@ class WS {
     connectStompJSLockRate() {
         console.log('@@[STOMP] connectStompJSLockRate() -> this', this);
 
-        const topic = "/topic/loc_rate";
         let client = Stomp.client(socketHost);
         WS.stompJSClient = client;
         client.debug = msg => console.info('@@[STOMP] DEBUG', msg);
@@ -62,13 +67,40 @@ class WS {
                 store.dispatch(setLocEurRate(Number(data.body)));
             }
         );
+
+        this.stompAndroid();
     
         client.connect(
           null,
           null,
           onSubscribe
         );
-      }
+    }
+
+    stompAndroid() {
+        if (Platform.OS === 'android') {
+            DeviceEventEmitter.removeAllListeners("onStompConnect");
+            DeviceEventEmitter.addListener("onStompConnect", () => {
+                console.info(`@@@@[STOMP][ANDROID] ${require('moment')().format('YYYY-MM-DD HH:mm:ss')} Connected`);
+
+            });
+            
+            DeviceEventEmitter.removeAllListeners("onStompError");
+            DeviceEventEmitter.addListener("onStompError", ({type, message}) => {
+                console.info(`@@@@[STOMP][ANDROID] ${require('moment')().format('YYYY-MM-DD HH:mm:ss')} Error`,{type, message});
+            });
+
+            // DeviceEventEmitter.removeAllListeners("onStompMessage");
+            DeviceEventEmitter.addListener("onStompMessage", ({message}) => {
+                //const {message} = body;
+                console.info(`@@@@[STOMP][ANDROID] ${require('moment')().format('YYYY-MM-DD HH:mm:ss')} Message`,{message});
+                store.dispatch(setLocEurRate(Number(message)));
+
+            });
+
+            androidStomp.getData('',topic);
+        }
+    }
 
     startGrouping(scehduleTime = 20 * 1000){
         console.log("LOC PRICE startGrouping")
@@ -149,6 +181,15 @@ class WS {
 
     close() {
         console.log(`@@exchangerWebsocket::close ${require('moment')().format('YYYY-MM-DD hh:mm:ss')}`);
+        
+        if (Platform.OS === 'android') {
+            DeviceEventEmitter.removeAllListeners("onStompConnect");
+            DeviceEventEmitter.removeAllListeners("onStompError");
+            DeviceEventEmitter.removeAllListeners("onStompMessage");
+
+            androidStomp.close();
+        }
+        
         
         if (this.shoudSocketReconnect) {
             if (store.getState().currency.isLocPriceWebsocketConnected) {
