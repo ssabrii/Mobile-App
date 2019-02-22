@@ -81,12 +81,14 @@ class LocRateButton extends Component {
         }
         let locRate = fiat / locAmount;
 
+        console.debug(`@@@[component::render] locEurRate: ${exchangeRates.locEurRate ? exchangeRates.locEurRate.toFixed(20): 'null'}`, this.props);
+
         return (
             <TouchableWithoutFeedback onPress={this.props.onPress}>
                 <View style={styles.fab}>
                 {
                     locRate != 0 ? 
-                        (<Text style={styles.fabText}>LOC/{currency} {parseFloat(locRate).toFixed(2)}</Text>)
+                        (<Text style={styles.fabText}>LOC/{currency} {parseFloat(locRate).toFixed(10)}</Text>)
                         :
                         (<Text style={styles.fabText}>LOC/{currency}    </Text>)
                 }
@@ -106,6 +108,8 @@ LocRateButton.defaultProps = {
 };
 
 let mapStateToProps = (state) => {
+    console.debug(`@@[component] locEurRate: ${state.exchangeRates.locEurRate ? state.exchangeRates.locEurRate.toFixed(20): 'null'}`,state);
+
     return {
         currency: state.currency.currency,
         currencySign: state.currency.currencySign,

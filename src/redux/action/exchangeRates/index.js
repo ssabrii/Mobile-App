@@ -15,6 +15,7 @@ export const getCurrencyRates = () => {
     return dispatch => {
         requester.getCurrencyRates().then(res => {
             res.body.then(currencyExchangeRates => {
+                console.info('@@setCurrencyExchangeRates',currencyExchangeRates)
                 dispatch(setCurrencyExchangeRates(currencyExchangeRates));
             });
         });
@@ -26,7 +27,7 @@ export const getLocRate = (baseCurrency) => {
     return dispatch => {
         requester.getLocRateByCurrency(baseCurrency).then(res => {
             res.body.then(data => {
-                console.log("getLocRate", data);
+                console.log("@@getLocRate", {data, baseCurrency});
                 dispatch(setLocEurRate(Number(data[0][`price_${(baseCurrency).toLowerCase()}`])));
             });
         });

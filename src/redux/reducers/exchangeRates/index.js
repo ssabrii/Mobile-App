@@ -18,6 +18,7 @@ export default handleActions(
         },
 
         [setLocEurRate]: (state, {payload}) => {
+            console.debug(`@@@[reducer] locEurRate: ${payload.toFixed(20)}`)
             return { ...state, locEurRate: payload};
         },
 

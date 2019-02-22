@@ -107,3 +107,6 @@ else {
     
 
 }
+
+// debug
+require('./utils/reactotronLogging')

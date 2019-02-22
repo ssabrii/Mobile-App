@@ -186,12 +186,12 @@ class Login extends Component {
                         </TouchableOpacity>
                     </View>
 
-                    <View style={styles.lowOpacity}>
+                    {/* <View style={styles.lowOpacity}>
                         <Image
                             source={require('../../../../assets/get-started-white-outline.png')}
                             style={styles.getStartedImage}
                         />
-                    </View>
+                    </View> */}
 
                     <ProgressDialog
                        visible={this.state.showProgress}
