@@ -14,7 +14,7 @@ const overWriteConsoleLog = function() {
       if (name.indexOf('@@') > -1) {
         //if (data)
         let str = '';
-        args.map(item => str += `${item.toString()}/${typeof(item)}, `);
+        args.map(item => str += `${item ? item.toString() : ''}/${typeof(item)}, `);
         // console.tron.log(name, str);
         try {
           console.tron.log(name, data);

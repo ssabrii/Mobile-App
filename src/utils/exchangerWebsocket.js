@@ -31,34 +31,34 @@ class WS {
         this.shoudSocketReconnect = true;
         this.initSocket();
         this.locAmounts = [];
-        // this.connectSocketForLocRate = this.connectStompJSLockRate.bind(this);      
     }
 
     initSocket() {
-        console.log('@@exchangerWebsocket::initSocket', socketHostPrice);
+        console.log('@@[WS] exchangerWebsocket::initSocket', socketHostPrice);
         
         this.ws = new WebSocket(socketHostPrice);
         this.ws.onmessage = this.handleRecieveMessage;
         this.ws.onopen = this.connect;
         this.ws.onclose = () => { 
+            console.log(`@@[WS] ${require('moment')().format('YYYY-MM-DD hh:mm:ss')} onClone, this`, this);
             this.close(this); 
         };
 
-        this.connectStompJSLockRate();        
+        this.connectStompJSLockRate();
     }
 
     connectStompJSLockRate() {
-        console.log('@@connectStompJSLockRate() -> this', this);
+        console.log('@@[STOMP] connectStompJSLockRate() -> this', this);
 
         const topic = "/topic/loc_rate";
         let client = Stomp.client(socketHost);
         WS.stompJSClient = client;
-        client.debug = msg => console.info('@@ [DEBUG] STOMP', msg);
+        client.debug = msg => console.info('@@[STOMP] DEBUG', msg);
 
         const onSubscribe = () => client.subscribe(
             topic, 
             (data) => {
-                console.info(`@@@ ${require('moment')().format('YYYY-MM-DD hh:mm:ss')} [EVENT]`, {data,body:data.body});
+                console.info(`@@@@[STOMP] ${require('moment')().format('YYYY-MM-DD hh:mm:ss')} [EVENT]`, {data,body:data.body});
                 store.dispatch(setLocEurRate(Number(data.body)));
             }
         );
@@ -94,7 +94,7 @@ class WS {
     }
 
     onTick() {
-        console.log('@@exchangerWebsocket::onTick');
+        console.log('@@@@[WS] exchangerWebsocket::onTick');
         
         let clonedLocAmounts = [...WS.self.locAmounts];
         WS.self.locAmounts = [];
@@ -105,15 +105,13 @@ class WS {
     }
 
     connect() {
-        console.log('@@exchangerWebsocket::connect');
+        console.log(`@@[WS] ${require('moment')().format('YYYY-MM-DD hh:mm:ss')} exchangerWebsocket::connect`);
         
         store.dispatch(setLocPriceWebsocketConnection(true));
     }
 
     sendMessage(id, method, params, isMarked = false) {
-        console.log('@@exchangerWebsocket::sendMessage');
-        
-        console.log("WS - sendMessage", id, method, params, this.markedID);
+        console.log(`@@@@[WS] ${require('moment')().format('YYYY-MM-DD hh:mm:ss')} exchangerWebsocket::sendMessage`, id, method, params, this.markedID);
         if (this.ws.readyState === 1 && id) {
             method = method ? method : DEFAULT_SOCKET_METHOD;
             if (isMarked) {
@@ -131,10 +129,9 @@ class WS {
     }
 
     handleRecieveMessage(event) {
-        console.log('@@exchangerWebsocket::handleRecieveMessage', event);
+        console.log(`@@[WS] ${require('moment')().format('YYYY-MM-DD hh:mm:ss')} exchangerWebsocket::handleRecieveMessage`, event);
         
         if (event) {
-            console.log("handleRecieveMessage", event.data, WS.self.grouping);
             const data = JSON.parse(event.data);
             if (data.params && data.params.secondsLeft) {
                 const seconds = Math.round(data.params.secondsLeft / 1000);
@@ -151,7 +148,7 @@ class WS {
     }
 
     close() {
-        console.log('@@exchangerWebsocket::close');
+        console.log(`@@exchangerWebsocket::close ${require('moment')().format('YYYY-MM-DD hh:mm:ss')}`);
         
         if (this.shoudSocketReconnect) {
             if (store.getState().currency.isLocPriceWebsocketConnected) {
@@ -165,14 +162,16 @@ class WS {
     }
 
     disconnect() {
-        console.log('@@exchangerWebsocket::disconnect', event);
+        console.log(`@@[WS/STOMP] ${require('moment')().format('YYYY-MM-DD hh:mm:ss')} 1/3 exchangerWebsocket::disconnect`, event);
         
         this.shoudSocketReconnect = false;
         if (this.ws) {
+            console.log('@@[WS] 2/3 exchangerWebsocket::close');
             this.ws.close();
         }
 
         if (WS.stompJSClient) {
+            console.log('@@[STOMP] 3/3 exchangerWebsocket::disconnect');
             WS.stompJSClient.disconnect();
             WS.stompJSClient = null;
         }
