@@ -69,8 +69,7 @@ jobs:
         - scp -o "StrictHostKeyChecking no" $HOME/Library/Logs/CoreSimulator/CoreSimulator.log "$var_799cfba7:$var3/$TRAVIS_BUILD_NUMBER/logs/ios/"
         - date
 
-    - stage: build android
-      language: android
+    - language: android
       jdk: oraclejdk8
       env: app_android=MobileApp_$TRAVIS_JOB_NUMBER_$TRAVIS_BRANCH.apk
       android:
